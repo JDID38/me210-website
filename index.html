@@ -199,6 +199,22 @@
             >
               Motor coupler
             </button>
+            <button
+              type="button"
+              class="cad-tab px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-gray-200 text-gray-800 hover:bg-gray-300"
+              data-cad-src="assets/NewStacker.glb"
+              data-cad-alt="Stacker mechanism CAD model"
+            >
+              Stacker
+            </button>
+            <button
+              type="button"
+              class="cad-tab px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-gray-200 text-gray-800 hover:bg-gray-300"
+              data-cad-src="assets/2to1GearsFlipped.glb"
+              data-cad-alt="2:1 gear reduction CAD model"
+            >
+              2:1 Gears
+            </button>
           </div>
           <model-viewer
             id="cad-model-main"
@@ -215,7 +231,7 @@
         <p class="text-sm text-gray-500 mb-16">Drag to rotate · Scroll to zoom · Auto-rotate preview</p>
 
         <h3 class="text-xl font-semibold text-gray-900 mb-6">Key components (3D)</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
           <figure class="bg-white rounded-xl shadow-md overflow-hidden">
             <model-viewer
@@ -230,7 +246,7 @@
             <figcaption class="p-4">
               <h4 class="font-semibold text-gray-900 mb-1">Acrylic chassis</h4>
               <p class="text-sm text-gray-500">
-                Laser-cut acrylic base plate — rigid frame for drivetrain, electronics, and launcher subsystems.
+                Laser-cut acrylic base plate providing a rigid frame for drivetrain, electronics, and launcher.
               </p>
             </figcaption>
           </figure>
@@ -267,6 +283,42 @@
               <h4 class="font-semibold text-gray-900 mb-1">Flywheel / puck launcher</h4>
               <p class="text-sm text-gray-500">
                 Launcher assembly including flywheels for accelerating the puck toward the target zone.
+              </p>
+            </figcaption>
+          </figure>
+
+          <figure class="bg-white rounded-xl shadow-md overflow-hidden">
+            <model-viewer
+              src="assets/NewStacker.glb"
+              alt="Stacker mechanism"
+              camera-controls
+              shadow-intensity="1"
+              camera-orbit="45deg 55deg 1.8m"
+              style="width: 100%; height: 288px;"
+              class="bg-gray-100 block"
+            ></model-viewer>
+            <figcaption class="p-4">
+              <h4 class="font-semibold text-gray-900 mb-1">Stacker mechanism</h4>
+              <p class="text-sm text-gray-500">
+                Stacker assembly for organizing and feeding pucks into the launcher system.
+              </p>
+            </figcaption>
+          </figure>
+
+          <figure class="bg-white rounded-xl shadow-md overflow-hidden">
+            <model-viewer
+              src="assets/2to1GearsFlipped.glb"
+              alt="2:1 gear reduction"
+              camera-controls
+              shadow-intensity="1"
+              camera-orbit="45deg 55deg 1.2m"
+              style="width: 100%; height: 288px;"
+              class="bg-gray-100 block"
+            ></model-viewer>
+            <figcaption class="p-4">
+              <h4 class="font-semibold text-gray-900 mb-1">2:1 Gear reduction</h4>
+              <p class="text-sm text-gray-500">
+                Gear set providing a 2:1 speed reduction for increased torque on the drivetrain.
               </p>
             </figcaption>
           </figure>
@@ -316,35 +368,468 @@
           </div>
         </div>
 
-        <!-- Row 2: Arduino Mega Wiring -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-          <div class="flex flex-col justify-center lg:order-1">
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">Arduino Mega Wiring</h3>
-            <!--
-              Replace this placeholder text with your actual explanation
-              of the Arduino Mega wiring layout.
-            -->
-            <p class="text-gray-600 mb-3">
-              The Arduino Mega serves as the central controller, interfacing with four mecanum
-              motor drivers via PWM, the flywheel ESC, limit switches for puck detection, and
-              IR sensors for line following and arena navigation.
-            </p>
-            <p class="text-gray-600">
-              All signal lines are routed through a custom perfboard shield that sits on top
-              of the Mega, keeping wiring organized and minimizing noise coupling between
-              high-current motor lines and sensitive analog inputs.
-            </p>
+        <!-- Row 2: Arduino Mega Wiring (no schematic — code-derived pin map + code block) -->
+        <div class="mb-16">
+          <h3 class="text-xl font-semibold text-gray-900 mb-4">Arduino Mega Wiring</h3>
+          <p class="text-gray-600 mb-3">
+            The Arduino Mega serves as the central controller. It drives four mecanum motors
+            through dual-H-bridge modules (IN1/IN2 for direction on digital pins 22-29,
+            PWM speed on pins 2-5), a flywheel launcher (BTS7960 enable pins 30-31,
+            PWM on pin 6), a servo for the puck slide (pin 8), and five analog line sensors
+            (A0, A12-A15) for edge detection and line following.
+          </p>
+          <p class="text-gray-600 mb-6">
+            Each motor pair uses separate direction and enable pins so the firmware can
+            independently set polarity and speed. The five line sensors use a simple
+            threshold-and-latch pattern: a reading above 200 latches the sensor "on black,"
+            and falling below 200 resets it, giving clean edge-triggered transitions
+            without debounce delays.
+          </p>
+
+          <!-- Pin-mapping table -->
+          <div class="overflow-x-auto mb-6">
+            <table class="w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
+              <thead class="bg-gray-100 text-gray-700 font-semibold">
+                <tr>
+                  <th class="px-4 py-2">Subsystem</th>
+                  <th class="px-4 py-2">Direction / Signal Pins</th>
+                  <th class="px-4 py-2">PWM / Enable Pin</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                <tr><td class="px-4 py-2 font-medium">Front-Left motor</td><td class="px-4 py-2 font-mono text-xs">D22 (IN1), D24 (IN2)</td><td class="px-4 py-2 font-mono text-xs">D3</td></tr>
+                <tr><td class="px-4 py-2 font-medium">Front-Right motor</td><td class="px-4 py-2 font-mono text-xs">D23 (IN1), D25 (IN2)</td><td class="px-4 py-2 font-mono text-xs">D5</td></tr>
+                <tr><td class="px-4 py-2 font-medium">Rear-Left motor</td><td class="px-4 py-2 font-mono text-xs">D26 (IN1), D28 (IN2)</td><td class="px-4 py-2 font-mono text-xs">D2</td></tr>
+                <tr><td class="px-4 py-2 font-medium">Rear-Right motor</td><td class="px-4 py-2 font-mono text-xs">D27 (IN1), D29 (IN2)</td><td class="px-4 py-2 font-mono text-xs">D4</td></tr>
+                <tr><td class="px-4 py-2 font-medium">Flywheel launcher</td><td class="px-4 py-2 font-mono text-xs">D31 (L_EN), D30 (R_EN)</td><td class="px-4 py-2 font-mono text-xs">D6</td></tr>
+                <tr><td class="px-4 py-2 font-medium">Launch servo</td><td class="px-4 py-2 font-mono text-xs">&mdash;</td><td class="px-4 py-2 font-mono text-xs">D8</td></tr>
+                <tr><td class="px-4 py-2 font-medium">Line sensors</td><td class="px-4 py-2 font-mono text-xs">A0 (edge L), A12 (edge R), A13 (L), A14 (C), A15 (R)</td><td class="px-4 py-2 font-mono text-xs">&mdash;</td></tr>
+              </tbody>
+            </table>
           </div>
-          <figure class="bg-white rounded-xl shadow-md overflow-hidden lg:order-2">
-            <img
-              src="assets/kicad.png"
-              alt="KiCad schematic — Arduino Mega and control wiring"
-              class="w-full min-h-[400px] object-contain p-4 bg-gray-50"
-            />
-            <figcaption class="px-4 pb-4 text-xs text-gray-400">
-              Same KiCad project export; add a separate wiring diagram image here if you export one.
-            </figcaption>
-          </figure>
+
+          <!-- Full source code -->
+          <div class="code-block rounded-xl overflow-hidden shadow-md">
+            <div class="code-block-header px-4 py-2 text-xs font-mono text-gray-400">
+              me210_robot.ino &mdash; complete source
+            </div>
+            <pre class="p-4 overflow-x-auto" style="max-height:600px;"><code class="text-sm font-mono">#include &lt;Servo.h&gt;
+
+/*--------------- Pin Definitions --------------------------*/
+
+const uint8_t FL_IN1 = 22;
+const uint8_t FL_IN2 = 24;
+const uint8_t FL_EN  = 3;
+
+const uint8_t FR_IN1 = 23;
+const uint8_t FR_IN2 = 25;
+const uint8_t FR_EN  = 5;
+
+const uint8_t RL_IN1 = 26;
+const uint8_t RL_IN2 = 28;
+const uint8_t RL_EN  = 2;
+
+const uint8_t RR_IN1 = 27;
+const uint8_t RR_IN2 = 29;
+const uint8_t RR_EN  = 4;
+
+const uint8_t LINE_EDGE_L = A0;
+const uint8_t LINE_EDGE_R = A12;
+const uint8_t LINE_L      = A13;
+const uint8_t LINE_C      = A14;
+const uint8_t LINE_R      = A15;
+
+const uint8_t FLY_LPWM = 6;
+const uint8_t FLY_L_EN = 31;
+const uint8_t FLY_R_EN = 30;
+
+const uint8_t SERVO_PIN         = 8;
+const int     SERVO_START_ANGLE = 0;
+const int     SERVO_END_ANGLE   = 135;
+
+/*--------------- Sensor Thresholds -------------------------*/
+
+const int LINE_EDGE_L_MIN = 200;
+const int LINE_L_MIN      = 200;
+const int LINE_C_MIN      = 200;
+const int LINE_R_MIN      = 200;
+const int LINE_EDGE_R_MIN = 200;
+
+/*--------------- Sensor Latches ----------------------------*/
+
+bool isLeftEdgeOnBlack  = false;
+bool isLeftOnBlack      = false;
+bool isCenterOnBlack    = false;
+bool isRightOnBlack     = false;
+bool isRightEdgeOnBlack = false;
+
+/*--------------- Tunables ---------------------------------*/
+
+const uint8_t FLY_TARGET_PWM = 150;
+
+const unsigned long FLYWHEEL_LEAD_MS       = 500;
+const unsigned long FLYWHEEL_LAG_MS        = 1000;
+const unsigned long SERVO_STEP_INTERVAL_MS = 20;
+const uint8_t       SERVO_STEP_SIZE        = 1;
+
+uint8_t flDriveSpeed = 65;
+uint8_t frDriveSpeed = 70;
+uint8_t rlDriveSpeed = 65;
+uint8_t rrDriveSpeed = 75;
+
+/*--------------- State Definitions ------------------------*/
+
+enum State_t { INIT, FWD, LEFT, RIGHT, LAUNCH, STOP };
+
+/*--------------- Module Variables -------------------------*/
+
+State_t state = INIT;
+Servo   launchServo;
+
+unsigned long lastServoStepMs     = 0;
+int           servoCurrentAngle   = SERVO_START_ANGLE;
+int           servoTargetAngle    = SERVO_START_ANGLE;
+
+unsigned long launchStartTime     = 0;
+unsigned long servoReachedEndTime = 0;
+bool          servoSweepStarted   = false;
+bool          servoReachedEnd     = false;
+
+/*--------------- Function Prototypes ----------------------*/
+
+void setUpPins(void);
+void setUpFlywheelPins(void);
+void setUpServoPins(void);
+void spinFlywheels(void);
+void stopFlywheels(void);
+void setServoTarget(int targetAngle);
+void resetServoToStart(void);
+void updateServoMotion(void);
+bool isServoAtTarget(void);
+void enterLaunchState(void);
+void stopEverything(void);
+uint8_t testForLeftEdgeBlack(void);
+uint8_t testForLeftEdgeWhite(void);
+uint8_t testForLeftBlack(void);
+uint8_t testForLeftWhite(void);
+uint8_t testForCenterBlack(void);
+uint8_t testForCenterWhite(void);
+uint8_t testForRightBlack(void);
+uint8_t testForRightWhite(void);
+uint8_t testForRightEdgeBlack(void);
+uint8_t testForRightEdgeWhite(void);
+void checkGlobalEvents(void);
+
+/*--------------- Main -------------------------------------*/
+
+void setup() {
+  Serial.begin(9600);
+  setUpPins();
+  state = INIT;
+}
+
+void loop() {
+  updateServoMotion();
+  checkGlobalEvents();
+
+  switch (state) {
+    case INIT:   strafeRight();  break;
+    case FWD:    moveForward();  break;
+    case LEFT:   strafeLeft();   break;
+    case RIGHT:  strafeRight();  break;
+
+    case LAUNCH:
+      stopMoving();
+      spinFlywheels();
+
+      if (!servoSweepStarted &amp;&amp;
+          (millis() - launchStartTime >= FLYWHEEL_LEAD_MS)) {
+        setServoTarget(SERVO_END_ANGLE);
+        servoSweepStarted = true;
+      }
+
+      if (servoSweepStarted &amp;&amp; !servoReachedEnd &amp;&amp;
+          isServoAtTarget() &amp;&amp;
+          servoTargetAngle == SERVO_END_ANGLE) {
+        servoReachedEnd     = true;
+        servoReachedEndTime = millis();
+      }
+
+      if (servoReachedEnd &amp;&amp;
+          (millis() - servoReachedEndTime >= FLYWHEEL_LAG_MS)) {
+        resetServoToStart();
+        state = STOP;
+      }
+      break;
+
+    case STOP:
+      stopEverything();
+      break;
+  }
+}
+
+/*--------------- Setup Helpers ----------------------------*/
+
+void setUpFlywheelPins(void) {
+  pinMode(FLY_LPWM, OUTPUT);
+  pinMode(FLY_L_EN, OUTPUT);
+  pinMode(FLY_R_EN, OUTPUT);
+  stopFlywheels();
+}
+
+void setUpServoPins(void) {
+  launchServo.attach(SERVO_PIN);
+  servoCurrentAngle = SERVO_START_ANGLE;
+  servoTargetAngle  = SERVO_START_ANGLE;
+  lastServoStepMs   = millis();
+  launchServo.write(servoCurrentAngle);
+}
+
+void setUpWheelPins(void) {
+  pinMode(FL_IN1, OUTPUT); pinMode(FL_IN2, OUTPUT); pinMode(FL_EN, OUTPUT);
+  pinMode(FR_IN1, OUTPUT); pinMode(FR_IN2, OUTPUT); pinMode(FR_EN, OUTPUT);
+  pinMode(RL_IN1, OUTPUT); pinMode(RL_IN2, OUTPUT); pinMode(RL_EN, OUTPUT);
+  pinMode(RR_IN1, OUTPUT); pinMode(RR_IN2, OUTPUT); pinMode(RR_EN, OUTPUT);
+  setWheelSpeeds(flDriveSpeed, frDriveSpeed, rlDriveSpeed, rrDriveSpeed);
+  stopMoving();
+}
+
+void setWheelSpeeds(uint8_t fl, uint8_t fr, uint8_t rl, uint8_t rr) {
+  flDriveSpeed = fl; frDriveSpeed = fr;
+  rlDriveSpeed = rl; rrDriveSpeed = rr;
+  applyWheelSpeeds();
+}
+
+void setUpPins(void) {
+  setUpFlywheelPins();
+  setUpServoPins();
+  setUpWheelPins();
+}
+
+/*--------------- State Helpers ----------------------------*/
+
+void enterLaunchState(void) {
+  launchStartTime     = millis();
+  servoReachedEndTime = 0;
+  servoSweepStarted   = false;
+  servoReachedEnd     = false;
+  stopFlywheels();
+  state = LAUNCH;
+}
+
+void stopEverything(void) {
+  stopFlywheels();
+}
+
+/*--------------- PWM Helpers ------------------------------*/
+
+void applyWheelSpeeds(void) {
+  analogWrite(FL_EN, flDriveSpeed);
+  analogWrite(FR_EN, frDriveSpeed);
+  analogWrite(RL_EN, rlDriveSpeed);
+  analogWrite(RR_EN, rrDriveSpeed);
+}
+
+void applyWheelSpeeds(uint8_t mul) {
+  analogWrite(FL_EN, constrain((int)mul * flDriveSpeed, 0, 255));
+  analogWrite(FR_EN, constrain((int)mul * frDriveSpeed, 0, 255));
+  analogWrite(RL_EN, constrain((int)mul * rlDriveSpeed, 0, 255));
+  analogWrite(RR_EN, constrain((int)mul * rrDriveSpeed, 0, 255));
+}
+
+/*--------------- Motion Helpers ---------------------------*/
+
+void moveForward(void) {
+  applyWheelSpeeds();
+  digitalWrite(FL_IN1, HIGH); digitalWrite(FL_IN2, LOW);
+  digitalWrite(FR_IN1, HIGH); digitalWrite(FR_IN2, LOW);
+  digitalWrite(RL_IN1, HIGH); digitalWrite(RL_IN2, LOW);
+  digitalWrite(RR_IN1, HIGH); digitalWrite(RR_IN2, LOW);
+}
+
+void moveBackward(void) {
+  applyWheelSpeeds();
+  digitalWrite(FL_IN1, LOW); digitalWrite(FL_IN2, HIGH);
+  digitalWrite(FR_IN1, LOW); digitalWrite(FR_IN2, HIGH);
+  digitalWrite(RL_IN1, LOW); digitalWrite(RL_IN2, HIGH);
+  digitalWrite(RR_IN1, LOW); digitalWrite(RR_IN2, HIGH);
+}
+
+void strafeRight(void) {
+  applyWheelSpeeds(2);
+  digitalWrite(FL_IN1, HIGH); digitalWrite(FL_IN2, LOW);
+  digitalWrite(FR_IN1, LOW);  digitalWrite(FR_IN2, HIGH);
+  digitalWrite(RL_IN1, LOW);  digitalWrite(RL_IN2, HIGH);
+  digitalWrite(RR_IN1, HIGH); digitalWrite(RR_IN2, LOW);
+}
+
+void strafeLeft(void) {
+  applyWheelSpeeds(2);
+  digitalWrite(FL_IN1, LOW);  digitalWrite(FL_IN2, HIGH);
+  digitalWrite(FR_IN1, HIGH); digitalWrite(FR_IN2, LOW);
+  digitalWrite(RL_IN1, HIGH); digitalWrite(RL_IN2, LOW);
+  digitalWrite(RR_IN1, LOW);  digitalWrite(RR_IN2, HIGH);
+}
+
+void turnCW(void) {
+  applyWheelSpeeds(2);
+  digitalWrite(FL_IN1, HIGH); digitalWrite(FL_IN2, LOW);
+  digitalWrite(FR_IN1, LOW);  digitalWrite(FR_IN2, HIGH);
+  digitalWrite(RL_IN1, HIGH); digitalWrite(RL_IN2, LOW);
+  digitalWrite(RR_IN1, LOW);  digitalWrite(RR_IN2, HIGH);
+}
+
+void turnCCW(void) {
+  applyWheelSpeeds(2);
+  digitalWrite(FL_IN1, LOW);  digitalWrite(FL_IN2, HIGH);
+  digitalWrite(FR_IN1, HIGH); digitalWrite(FR_IN2, LOW);
+  digitalWrite(RL_IN1, LOW);  digitalWrite(RL_IN2, HIGH);
+  digitalWrite(RR_IN1, HIGH); digitalWrite(RR_IN2, LOW);
+}
+
+void stopMoving(void) {
+  digitalWrite(FL_IN1, LOW); digitalWrite(FL_IN2, LOW);
+  digitalWrite(FR_IN1, LOW); digitalWrite(FR_IN2, LOW);
+  digitalWrite(RL_IN1, LOW); digitalWrite(RL_IN2, LOW);
+  digitalWrite(RR_IN1, LOW); digitalWrite(RR_IN2, LOW);
+  analogWrite(FL_EN, 0); analogWrite(FR_EN, 0);
+  analogWrite(RL_EN, 0); analogWrite(RR_EN, 0);
+}
+
+/*--------------- Flywheels --------------------------------*/
+
+void spinFlywheels(void) {
+  digitalWrite(FLY_L_EN, HIGH);
+  digitalWrite(FLY_R_EN, HIGH);
+  analogWrite(FLY_LPWM, FLY_TARGET_PWM);
+}
+
+void stopFlywheels(void) {
+  digitalWrite(FLY_L_EN, LOW);
+  digitalWrite(FLY_R_EN, LOW);
+  analogWrite(FLY_LPWM, 0);
+}
+
+/*--------------- Servo Helpers ----------------------------*/
+
+void setServoTarget(int targetAngle) {
+  if (targetAngle &lt; 0)   targetAngle = 0;
+  if (targetAngle > 180) targetAngle = 180;
+  servoTargetAngle = targetAngle;
+}
+
+void resetServoToStart(void) { setServoTarget(SERVO_START_ANGLE); }
+bool isServoAtTarget(void)   { return servoCurrentAngle == servoTargetAngle; }
+
+void updateServoMotion(void) {
+  unsigned long now = millis();
+  if (now - lastServoStepMs &lt; SERVO_STEP_INTERVAL_MS) return;
+  lastServoStepMs = now;
+  if (state != LAUNCH) return;
+
+  if (servoCurrentAngle &lt; servoTargetAngle) {
+    servoCurrentAngle += SERVO_STEP_SIZE;
+    if (servoCurrentAngle > servoTargetAngle)
+      servoCurrentAngle = servoTargetAngle;
+    launchServo.write(servoCurrentAngle);
+  } else if (servoCurrentAngle > servoTargetAngle) {
+    servoCurrentAngle -= SERVO_STEP_SIZE;
+    if (servoCurrentAngle &lt; servoTargetAngle)
+      servoCurrentAngle = servoTargetAngle;
+    launchServo.write(servoCurrentAngle);
+  }
+}
+
+/*--------------- Global Events ----------------------------*/
+
+void checkGlobalEvents() {
+  if (state == LAUNCH) return;
+
+  if (testForCenterBlack())    respToCenterBlack();
+  if (testForCenterWhite())    respToCenterWhite();
+  if (testForLeftBlack())      respToLeftBlack();
+  if (testForLeftWhite())      respToLeftWhite();
+  if (testForRightBlack())     respToRightBlack();
+  if (testForRightWhite())     respToRightWhite();
+  if (testForLeftEdgeBlack())  respToLeftEdgeBlack();
+  if (testForLeftEdgeWhite())  respToLeftEdgeWhite();
+  if (testForRightEdgeBlack()) respToRightEdgeBlack();
+  if (testForRightEdgeWhite()) respToRightEdgeWhite();
+}
+
+/*--------------- Sensor Tests -----------------------------*/
+
+uint8_t testForCenterBlack() {
+  if (analogRead(LINE_C) > LINE_C_MIN &amp;&amp; !isCenterOnBlack)
+    { isCenterOnBlack = true; return 1; }
+  return 0;
+}
+uint8_t testForCenterWhite() {
+  if (analogRead(LINE_C) &lt;= LINE_C_MIN &amp;&amp; isCenterOnBlack)
+    { isCenterOnBlack = false; return 1; }
+  return 0;
+}
+uint8_t testForLeftBlack() {
+  if (analogRead(LINE_L) > LINE_L_MIN &amp;&amp; !isLeftOnBlack)
+    { isLeftOnBlack = true; return 1; }
+  return 0;
+}
+uint8_t testForLeftWhite() {
+  if (analogRead(LINE_L) &lt;= LINE_L_MIN &amp;&amp; isLeftOnBlack)
+    { isLeftOnBlack = false; return 1; }
+  return 0;
+}
+uint8_t testForRightBlack() {
+  if (analogRead(LINE_R) > LINE_R_MIN &amp;&amp; !isRightOnBlack)
+    { isRightOnBlack = true; return 1; }
+  return 0;
+}
+uint8_t testForRightWhite() {
+  if (analogRead(LINE_R) &lt;= LINE_R_MIN &amp;&amp; isRightOnBlack)
+    { isRightOnBlack = false; return 1; }
+  return 0;
+}
+uint8_t testForLeftEdgeBlack() {
+  if (analogRead(LINE_EDGE_L) > LINE_EDGE_L_MIN &amp;&amp; !isLeftEdgeOnBlack)
+    { isLeftEdgeOnBlack = true; return 1; }
+  return 0;
+}
+uint8_t testForLeftEdgeWhite() {
+  if (analogRead(LINE_EDGE_L) &lt;= LINE_EDGE_L_MIN &amp;&amp; isLeftEdgeOnBlack)
+    { isLeftEdgeOnBlack = false; return 1; }
+  return 0;
+}
+uint8_t testForRightEdgeBlack() {
+  if (analogRead(LINE_EDGE_R) > LINE_EDGE_R_MIN &amp;&amp; !isRightEdgeOnBlack)
+    { isRightEdgeOnBlack = true; return 1; }
+  return 0;
+}
+uint8_t testForRightEdgeWhite() {
+  if (analogRead(LINE_EDGE_R) &lt;= LINE_EDGE_R_MIN &amp;&amp; isRightEdgeOnBlack)
+    { isRightEdgeOnBlack = false; return 1; }
+  return 0;
+}
+
+/*--------------- Sensor Responses -------------------------*/
+
+void respToCenterBlack() {
+  switch (state) {
+    case INIT: case LEFT: case RIGHT: state = FWD; break;
+    default: break;
+  }
+}
+void respToCenterWhite() { }
+void respToLeftBlack()   { if (state == FWD) state = LEFT;  }
+void respToLeftWhite()   { }
+void respToRightBlack()  { if (state == FWD) state = RIGHT; }
+void respToRightWhite()  { }
+void respToLeftEdgeBlack()  { }
+void respToLeftEdgeWhite()  { }
+void respToRightEdgeBlack() {
+  if (state == FWD) enterLaunchState();
+}
+void respToRightEdgeWhite() { }</code></pre>
+          </div>
         </div>
 
         <!-- Row 3: High-current motor driver (photo + schematic text — swap in a KiCad driver sheet if available) -->
