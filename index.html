@@ -61,6 +61,7 @@
           <a href="#mechanical" class="nav-link text-sm font-medium text-gray-600 hover:text-cardinal transition-colors">Mechanical Design</a>
           <a href="#electrical" class="nav-link text-sm font-medium text-gray-600 hover:text-cardinal transition-colors">Electrical Design</a>
           <a href="#software" class="nav-link text-sm font-medium text-gray-600 hover:text-cardinal transition-colors">Software</a>
+          <a href="#reflection" class="nav-link text-sm font-medium text-gray-600 hover:text-cardinal transition-colors">Reflection</a>
           <a href="#team" class="nav-link text-sm font-medium text-gray-600 hover:text-cardinal transition-colors">The Team</a>
         </div>
 
@@ -85,6 +86,7 @@
         <a href="#mechanical" class="nav-link block text-sm font-medium text-gray-600 hover:text-cardinal py-1">Mechanical Design</a>
         <a href="#electrical" class="nav-link block text-sm font-medium text-gray-600 hover:text-cardinal py-1">Electrical Design</a>
         <a href="#software" class="nav-link block text-sm font-medium text-gray-600 hover:text-cardinal py-1">Software</a>
+        <a href="#reflection" class="nav-link block text-sm font-medium text-gray-600 hover:text-cardinal py-1">Reflection</a>
         <a href="#team" class="nav-link block text-sm font-medium text-gray-600 hover:text-cardinal py-1">The Team</a>
       </div>
     </div>
@@ -123,24 +125,27 @@
       <!-- Project Overview -->
       <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         <h2 class="text-3xl font-bold text-gray-900 mb-6">Project Overview</h2>
-
-        <!--
-          Replace this placeholder text with your actual project description.
-        -->
         <p class="text-gray-600 mb-4">
           Our team designed and built an autonomous curling robot for the ME210 final competition.
-          The robot uses a mecanum-wheel drivetrain for omnidirectional movement, an angled puck
-          slide for consistent delivery, and a flywheel launcher to propel curling pucks down the
-          playing surface toward the target zone.
+          We initially brainstormed the simplest possible approach&mdash;a robot that would just
+          drive forward and push the puck toward the target&mdash;but early kinematic models showed
+          that controlling a pushing trajectory would be too imprecise. We pivoted to a stationary
+          flywheel launcher design early in the process and never looked back.
         </p>
         <p class="text-gray-600 mb-4">
-          The system is controlled by an Arduino Mega running a custom state-machine architecture
-          with non-blocking timers, enabling the robot to autonomously navigate the arena, collect
-          pucks, and execute precision shots within the two-minute match window.
+          The final robot uses a mecanum-wheel drivetrain on a laser-cut acrylic chassis (rebuilt
+          after our first Duron frame proved too weak), a dual-flywheel launcher with 3D-printed
+          motor couplers, and a servo-driven puck stacker. An Arduino Mega runs a fully non-blocking
+          state machine that follows a line across the table, strafes into position, and executes a
+          timed launch sequence&mdash;all without a single call to
+          <code class="bg-gray-200 px-1 py-0.5 rounded text-sm">delay()</code>.
         </p>
         <p class="text-gray-600">
-          This portfolio documents our mechanical design, electrical systems, software architecture,
-          and the team behind the project.
+          We were the very last team to get checked off before the competition started, but that
+          stressful push paid off: in our first round the robot ran its state machine flawlessly,
+          followed the line, and placed the puck right on the target while our opponent's robot
+          got stuck on the table. This portfolio documents the mechanical, electrical, and software
+          journey that got us there.
         </p>
       </article>
     </section>
@@ -154,10 +159,14 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <h2 class="text-3xl font-bold text-gray-900 mb-2">Mechanical Design</h2>
-        <p class="text-gray-500 mb-12 max-w-2xl">
-          We exported three CAD assemblies as <code class="text-xs bg-gray-200 px-1 rounded">.glb</code> files
-          (chassis, flywheel launcher, motor coupler). Use the buttons to preview each part in the main viewer,
-          or inspect all three in the row below.
+        <p class="text-gray-500 mb-12 max-w-3xl">
+          The mechanical architecture was built entirely around our laser-cut acrylic chassis. We
+          chose acrylic after our initial Duron prototype proved too flexible&mdash;we needed a
+          completely rigid foundation that would not vibrate when the high-speed flywheels were
+          spinning. Every mounting hole was mapped out in CAD before manufacturing, and the robot
+          uses a unique angled structure: an extension of the puck slide doubles as a component
+          platform, guiding pucks smoothly into the launcher while giving the flywheels full
+          contact to grip and fire. Explore each subsystem in 3D below.
         </p>
 
         <!--
@@ -228,7 +237,43 @@
             class="bg-gray-100 block"
           ></model-viewer>
         </div>
-        <p class="text-sm text-gray-500 mb-16">Drag to rotate · Scroll to zoom · Auto-rotate preview</p>
+        <p class="text-sm text-gray-500 mb-12">Drag to rotate · Scroll to zoom · Auto-rotate preview</p>
+
+        <!-- Mechanical design write-up -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Chassis &amp; Assembly</h3>
+            <p class="text-gray-600 text-sm mb-3">
+              Heavy DC drive motors and the main flywheel assembly are bolted directly to the
+              bottom plate to keep the center of gravity low and improve driving stability. The
+              electronics&mdash;Arduino Mega, motor drivers, and wiring&mdash;are securely mounted
+              above, away from spinning wheels and the puck loading area. Thick machine screws lock
+              the 3D-printed motor mounts to the front of the acrylic base, and the servo plus
+              stacker wheel are bolted near the center to feed the angled slide.
+            </p>
+            <p class="text-gray-600 text-sm">
+              The line-following sensor array sits on a small bracket extending off the front edge
+              of the bottom plate, placing the five IR sensors at the exact height needed to read
+              the track tape accurately without scraping the floor.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Why Mecanum Wheels</h3>
+            <p class="text-gray-600 text-sm mb-3">
+              The curling field requires the robot to find tape lines and align with a distant
+              target. Standard wheels would force the robot to pivot to correct its path, which
+              would instantly ruin the aim of our stationary launcher. Mecanum wheels solve this
+              with holonomic movement&mdash;the robot can strafe directly left or right to center
+              on a line without ever changing its forward-facing angle.
+            </p>
+            <p class="text-gray-600 text-sm">
+              Even though we had to adapt our chassis mounting brackets at the last minute to fit
+              the borrowed lab wheels, it worked. Sliding smoothly sideways into the starting box
+              or centering over the launch line without rotating kept our code simple and our
+              mechanical aim perfectly straight.
+            </p>
+          </div>
+        </div>
 
         <h3 class="text-xl font-semibold text-gray-900 mb-6">Key components (3D)</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -246,7 +291,9 @@
             <figcaption class="p-4">
               <h4 class="font-semibold text-gray-900 mb-1">Acrylic chassis</h4>
               <p class="text-sm text-gray-500">
-                Laser-cut acrylic base plate providing a rigid frame for drivetrain, electronics, and launcher.
+                Second-generation laser-cut acrylic base plate with pre-mapped mounting holes for
+                every component. Replaced the original Duron frame that was too flexible to survive
+                flywheel vibrations. Motors bolt to the underside to keep the center of gravity low.
               </p>
             </figcaption>
           </figure>
@@ -264,7 +311,8 @@
             <figcaption class="p-4">
               <h4 class="font-semibold text-gray-900 mb-1">Motor coupler (shaft)</h4>
               <p class="text-sm text-gray-500">
-                Printed coupler transferring torque from the motor to the wheel or launcher shaft.
+                3D-printed custom coupler designed after off-the-shelf hardware created severe wobble
+                that absorbed kinetic energy and ruined launch consistency.
               </p>
             </figcaption>
           </figure>
@@ -282,7 +330,9 @@
             <figcaption class="p-4">
               <h4 class="font-semibold text-gray-900 mb-1">Flywheel / puck launcher</h4>
               <p class="text-sm text-gray-500">
-                Launcher assembly including flywheels for accelerating the puck toward the target zone.
+                Dual-flywheel assembly bolted to the bottom plate. An angled extension of the puck
+                slide guides pucks into the spinning wheels for full-contact grip and launch. Firmware
+                soft-start ramps the motors to avoid the stall currents that burned our first drivers.
               </p>
             </figcaption>
           </figure>
@@ -300,7 +350,9 @@
             <figcaption class="p-4">
               <h4 class="font-semibold text-gray-900 mb-1">Stacker mechanism</h4>
               <p class="text-sm text-gray-500">
-                Stacker assembly for organizing and feeding pucks into the launcher system.
+                Servo-driven puck stacker bolted near the center of the chassis to feed the angled
+                slide. The servo originally slipped against the wheel; we fixed it by adding a screw
+                hole to pin the servo horn directly to the stacker wheel.
               </p>
             </figcaption>
           </figure>
@@ -318,7 +370,8 @@
             <figcaption class="p-4">
               <h4 class="font-semibold text-gray-900 mb-1">2:1 Gear reduction</h4>
               <p class="text-sm text-gray-500">
-                Gear set providing a 2:1 speed reduction for increased torque on the drivetrain.
+                2:1 gear reduction trading flywheel speed for higher torque, helping the motors
+                overcome initial inertia without drawing as much stall current.
               </p>
             </figcaption>
           </figure>
@@ -337,63 +390,99 @@
 
         <h2 class="text-3xl font-bold text-gray-900 mb-2">Electrical Design</h2>
         <p class="text-gray-500 mb-12 max-w-2xl">
-          Schematics, wiring diagrams, and the stories behind our power system challenges.
+          Because we spent most of our timeline on mechanical redesigns, electrical integration
+          happened fast&mdash;and exposed power limits we had not anticipated. Below is the KiCad
+          schematic for the full system, followed by what we learned about each subsystem.
         </p>
 
-        <!-- Row 1: Main Power Distribution (KiCad export — replace with a dedicated power sheet if you split schematics) -->
+        <!-- Full-width KiCad schematic -->
+        <figure class="bg-white rounded-xl shadow-md overflow-hidden mb-16">
+          <img
+            src="assets/kicad.png"
+            alt="KiCad schematic for the ME210 curling robot"
+            class="w-full object-contain p-6 bg-gray-50"
+            style="min-height: 500px;"
+          />
+          <figcaption class="px-6 pb-4 text-sm text-gray-500">
+            Full KiCad schematic covering power distribution, motor driver connections, and sensor I/O.
+          </figcaption>
+        </figure>
+
+        <!-- Three-column explanation grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+
+          <!-- Column 1: Power Distribution -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Power Distribution</h3>
+            <p class="text-gray-600 text-sm mb-3">
+              A 12 V LiPo feeds two separate paths: a buck converter drops to 5 V for the Arduino
+              and sensor logic, while the motors draw directly from 12 V through high-current
+              MOSFETs. Schottky diodes block back-EMF from the flywheels.
+            </p>
+            <p class="text-gray-600 text-sm">
+              Spinning up the heavy flywheels pulled a massive stall current that we did not
+              anticipate during design. During our first code tests we actually burned through
+              several motor driver ICs, forcing us to add inline fuses and switch to beefier
+              power electronics before we could run the launcher reliably.
+            </p>
+          </div>
+
+          <!-- Column 2: Arduino Mega Wiring -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Arduino Mega Wiring</h3>
+            <p class="text-gray-600 text-sm mb-3">
+              The Mega drives four mecanum motors via dual-H-bridge modules (direction on D22-29,
+              PWM on D2-5), a flywheel launcher (BTS7960 enables D30-31, PWM D6), a servo (D8),
+              and five analog line sensors (A0, A12-A15).
+            </p>
+            <p class="text-gray-600 text-sm">
+              We wrote small, separate test scripts for each subsystem first&mdash;flywheels,
+              servo dropper, drive motors&mdash;to understand real-world behavior before combining
+              everything into one program. This modular approach was critical because our coding
+              phase started very late after weeks of mechanical rebuilds.
+            </p>
+          </div>
+
+          <!-- Column 3: High-Current Motor Drivers -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">High-Current Motor Drivers</h3>
+            <p class="text-gray-600 text-sm mb-3">
+              Our initial L298N drivers failed catastrophically when flywheel inrush currents
+              exceeded 20 A per motor. We replaced them with BTS7960 H-bridge modules rated for
+              43 A continuous, which include built-in thermal shutdown and current sensing.
+            </p>
+            <p class="text-gray-600 text-sm">
+              Even with the BTS7960s, raw spin-up was too aggressive. We added a firmware soft-start
+              ramp (PWM increases over 500 ms) to limit inrush and protect both the drivers and
+              the motor brushes. This was one of the first things we coded once the hardware was
+              physically assembled.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Motor driver photo + pin table side-by-side -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           <figure class="bg-white rounded-xl shadow-md overflow-hidden">
             <img
-              src="assets/kicad.png"
-              alt="KiCad schematic — power distribution and related circuitry"
-              class="w-full min-h-[400px] object-contain p-4 bg-gray-50"
+              src="assets/motordriver%20high%20current.jpg"
+              alt="BTS7960 high-current motor driver module"
+              class="w-full object-contain p-4 bg-gray-50"
+              style="min-height: 320px;"
             />
+            <figcaption class="px-4 pb-4 text-sm text-gray-500">
+              BTS7960 H-bridge module used for the flywheel motors after the L298N failures.
+            </figcaption>
           </figure>
-          <div class="flex flex-col justify-center">
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">Main Power Distribution</h3>
-            <!--
-              Replace this placeholder text with your actual explanation
-              of the power distribution system.
-            -->
-            <p class="text-gray-600 mb-3">
-              The robot runs on a 12 V LiPo battery pack with separate regulation paths for logic
-              (5 V via buck converter) and motor power (direct 12 V through high-current MOSFETs).
-              Schottky diodes prevent back-EMF from the flywheel motors from damaging the regulator.
-            </p>
-            <p class="text-gray-600">
-              During stall conditions, the flywheel motors draw upwards of 15 A per channel.
-              We added inline fuses and thermal monitoring after an early prototype burned through
-              a motor driver IC during a stall event in testing.
-            </p>
-          </div>
-        </div>
 
-        <!-- Row 2: Arduino Mega Wiring (no schematic — code-derived pin map + code block) -->
-        <div class="mb-16">
-          <h3 class="text-xl font-semibold text-gray-900 mb-4">Arduino Mega Wiring</h3>
-          <p class="text-gray-600 mb-3">
-            The Arduino Mega serves as the central controller. It drives four mecanum motors
-            through dual-H-bridge modules (IN1/IN2 for direction on digital pins 22-29,
-            PWM speed on pins 2-5), a flywheel launcher (BTS7960 enable pins 30-31,
-            PWM on pin 6), a servo for the puck slide (pin 8), and five analog line sensors
-            (A0, A12-A15) for edge detection and line following.
-          </p>
-          <p class="text-gray-600 mb-6">
-            Each motor pair uses separate direction and enable pins so the firmware can
-            independently set polarity and speed. The five line sensors use a simple
-            threshold-and-latch pattern: a reading above 200 latches the sensor "on black,"
-            and falling below 200 resets it, giving clean edge-triggered transitions
-            without debounce delays.
-          </p>
-
-          <!-- Pin-mapping table -->
-          <div class="overflow-x-auto mb-6">
+          <div class="overflow-x-auto flex flex-col justify-center">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Pin Mapping</h3>
             <table class="w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
               <thead class="bg-gray-100 text-gray-700 font-semibold">
                 <tr>
                   <th class="px-4 py-2">Subsystem</th>
                   <th class="px-4 py-2">Direction / Signal Pins</th>
-                  <th class="px-4 py-2">PWM / Enable Pin</th>
+                  <th class="px-4 py-2">PWM / Enable</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100">
@@ -403,17 +492,19 @@
                 <tr><td class="px-4 py-2 font-medium">Rear-Right motor</td><td class="px-4 py-2 font-mono text-xs">D27 (IN1), D29 (IN2)</td><td class="px-4 py-2 font-mono text-xs">D4</td></tr>
                 <tr><td class="px-4 py-2 font-medium">Flywheel launcher</td><td class="px-4 py-2 font-mono text-xs">D31 (L_EN), D30 (R_EN)</td><td class="px-4 py-2 font-mono text-xs">D6</td></tr>
                 <tr><td class="px-4 py-2 font-medium">Launch servo</td><td class="px-4 py-2 font-mono text-xs">&mdash;</td><td class="px-4 py-2 font-mono text-xs">D8</td></tr>
-                <tr><td class="px-4 py-2 font-medium">Line sensors</td><td class="px-4 py-2 font-mono text-xs">A0 (edge L), A12 (edge R), A13 (L), A14 (C), A15 (R)</td><td class="px-4 py-2 font-mono text-xs">&mdash;</td></tr>
+                <tr><td class="px-4 py-2 font-medium">Line sensors</td><td class="px-4 py-2 font-mono text-xs">A0, A12, A13, A14, A15</td><td class="px-4 py-2 font-mono text-xs">&mdash;</td></tr>
               </tbody>
             </table>
           </div>
+        </div>
 
-          <!-- Full source code -->
-          <div class="code-block rounded-xl overflow-hidden shadow-md">
-            <div class="code-block-header px-4 py-2 text-xs font-mono text-gray-400">
-              me210_robot.ino &mdash; complete source
-            </div>
-            <pre class="p-4 overflow-x-auto" style="max-height:600px;"><code class="text-sm font-mono">#include &lt;Servo.h&gt;
+        <!-- Full source code -->
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Complete Firmware Source</h3>
+        <div class="code-block rounded-xl overflow-hidden shadow-md">
+          <div class="code-block-header px-4 py-2 text-xs font-mono text-gray-400">
+            me210_robot.ino &mdash; complete source
+          </div>
+          <pre class="p-4 overflow-x-auto" style="max-height:600px;"><code class="text-sm font-mono">#include &lt;Servo.h&gt;
 
 /*--------------- Pin Definitions --------------------------*/
 
@@ -832,34 +923,6 @@ void respToRightEdgeWhite() { }</code></pre>
           </div>
         </div>
 
-        <!-- Row 3: High-current motor driver (photo + schematic text — swap in a KiCad driver sheet if available) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <figure class="bg-white rounded-xl shadow-md overflow-hidden">
-            <img
-              src="assets/motordriver%20high%20current.jpg"
-              alt="High-current motor driver hardware"
-              class="w-full min-h-[400px] object-contain p-4 bg-gray-50"
-            />
-          </figure>
-          <div class="flex flex-col justify-center">
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">High-Current Motor Driver Circuits</h3>
-            <!--
-              Replace this placeholder text with your explanation of the
-              motor driver circuits and the burned driver incident.
-            -->
-            <p class="text-gray-600 mb-3">
-              Each flywheel motor is driven by a dedicated BTS7960 H-bridge module rated for 43 A
-              continuous current. We chose these after our initial L298N drivers failed catastrophically
-              during flywheel spin-up, where inrush currents exceeded 20 A per motor.
-            </p>
-            <p class="text-gray-600">
-              The BTS7960 modules include built-in thermal shutdown and current sensing. We added
-              external soft-start logic in firmware (ramping PWM over 500 ms) to limit inrush
-              and extend motor brush life.
-            </p>
-          </div>
-        </div>
-
       </div>
     </section>
 
@@ -873,7 +936,10 @@ void respToRightEdgeWhite() { }</code></pre>
 
         <h2 class="text-3xl font-bold text-gray-900 mb-2">Software</h2>
         <p class="text-gray-500 mb-12 max-w-2xl">
-          State machine architecture, non-blocking timers, and mecanum drive logic.
+          Coding was pushed to the very end after weeks of mechanical rebuilds, so efficiency was
+          critical. We built a fully non-blocking state machine, eliminated every
+          <code class="text-xs bg-gray-200 px-1 rounded">delay()</code>, and spent hours
+          hand-tuning motor speeds and sensor thresholds on the competition table.
         </p>
 
         <!-- State Machine Flowchart -->
@@ -895,11 +961,13 @@ void respToRightEdgeWhite() { }</code></pre>
           <div>
             <h3 class="text-xl font-semibold text-gray-900 mb-4">State Machine &amp; Non-Blocking Launch Sequence</h3>
             <p class="text-gray-500 mb-4 max-w-3xl">
-              We avoided <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">delay()</code>
-              entirely. The main loop runs continuously: an incremental servo stepper
-              and edge-detected line sensors drive all state transitions without ever
-              blocking. The LAUNCH state sequences flywheels, a timed servo sweep, and
-              a lag timer using only <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">millis()</code> comparisons.
+              Basic linear programming was not enough&mdash;the robot needed to read line sensors
+              constantly while also ramping flywheels over several seconds. We completely removed
+              <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">delay()</code> and built
+              a state machine where every timed action uses
+              <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">millis()</code> comparisons.
+              The LAUNCH state sequences flywheel spin-up, a 500 ms lead, a servo sweep, and a
+              1-second lag&mdash;all without blocking the main loop.
             </p>
             <div class="code-block rounded-xl overflow-hidden shadow-md">
               <div class="code-block-header px-4 py-2 text-xs font-mono text-gray-400">
@@ -1022,10 +1090,12 @@ void enterLaunchState() {
           <div>
             <h3 class="text-xl font-semibold text-gray-900 mb-4">Mecanum Drive &amp; Hardware Helpers</h3>
             <p class="text-gray-500 mb-4 max-w-3xl">
-              Each mecanum motion primitive sets four IN1/IN2 direction pins then applies
-              per-wheel PWM speeds (individually tuned to compensate for motor variation).
-              Strafing uses a 2&times; speed multiplier for adequate lateral force.
-              Flywheel and sensor-latch logic rounds out the hardware layer.
+              Small differences between the cheap DC motors and the borrowed lab wheels caused
+              the robot to crab-walk sideways. We spent a lot of time manually tuning the base
+              PWM speed for each individual wheel (65, 70, 65, 75) until the robot drove straight.
+              Strafing uses a 2&times; multiplier for adequate lateral force. The sensor latch
+              pattern fires once per black/white transition, and we had to calibrate thresholds to
+              the actual room lighting to eliminate phantom detections from ambient shadows.
             </p>
             <div class="code-block rounded-xl overflow-hidden shadow-md">
               <div class="code-block-header px-4 py-2 text-xs font-mono text-gray-400">
@@ -1125,10 +1195,74 @@ uint8_t testForLeftWhite() {
 
 
     <!-- ====================================================== -->
-    <!--  SECTION 5 — THE TEAM                                   -->
+    <!--  SECTION 5 — REFLECTION                                 -->
+    <!-- ====================================================== -->
+    <section id="reflection" class="py-16 md:py-24">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Reflection</h2>
+
+        <div class="prose prose-gray max-w-none text-gray-600 space-y-4">
+          <p>
+            Looking back, the single biggest lesson from this project is that mechatronics demands
+            a solid physical foundation before any programming can happen. We spent the first several
+            weeks entirely on CAD and physical prototyping with Caleb and Daniel, which quickly exposed
+            hidden structural flaws we never would have caught on paper. When our Duron chassis cracked
+            under motor vibrations, we had no choice but to recut the entire frame in acrylic&mdash;a
+            setback that cost days but ultimately gave us a far more robust platform.
+          </p>
+          <p>
+            The cascading logistics problems taught us adaptability. Our ordered mecanum wheels never
+            arrived, so we borrowed a set from the university lab. Those wheels had a completely
+            different size and friction coefficient from what we had modeled, forcing rapid redesigns
+            of every mounting point on the new acrylic chassis. Then connecting the high-speed DC
+            motors to the flywheel hubs created a terrible wobble that absorbed all the kinetic
+            energy. Off-the-shelf hardware simply could not achieve the tolerances we needed, so we
+            turned to 3D printing to iterate on custom motor shafts and couplers until we got a
+            precise fit. Even the servo kept slipping against the puck stacker wheel until we added
+            a screw hole to physically pin the servo horn in place.
+          </p>
+          <p>
+            Because so much time went into perfecting these physical mechanisms, the coding phase was
+            pushed to the very end. We knew we had to be extremely efficient, so we wrote small
+            isolated test scripts for the flywheels, the servo dropper, and the drive motors before
+            combining anything. That modular approach paid off: when we merged everything into one
+            program, the interfaces were already understood and tested.
+          </p>
+          <p>
+            Even so, real-world integration surfaced problems no bench test could. Spinning up the
+            heavy flywheels pulled a massive stall current that burned through our first motor drivers.
+            The cheap DC motors and borrowed wheels made the robot drift sideways, requiring hours of
+            per-wheel speed tuning. Line sensors gave phantom detections because we had not calibrated
+            their analog thresholds to the actual room lighting. And driving out of the starting box
+            was nearly impossible because the zone boundaries use the exact same black tape the robot
+            was chasing&mdash;a problem we solved with arming delays that temporarily ignore the edge
+            sensors after leaving a zone.
+          </p>
+          <p>
+            Solving these final software bugs was a race against time. Our team was literally the very
+            last one to get checked off before the competition started. But that stressful push proved
+            the design was robust: in the first round our robot ran the state machine perfectly, followed
+            the line, and placed the puck right on the target while our opponent got stuck on the table.
+          </p>
+          <p>
+            Winning that round after checking off last felt incredible. More than anything, this project
+            showed us the real cost of the gap between a CAD model and a working robot on a competition
+            table. Every fix&mdash;the acrylic recut, the 3D-printed couplers, the firmware soft-start,
+            the sensor calibration&mdash;was a bridge between what we designed and what physics actually
+            allowed. That constant feedback loop between mechanical constraints, electrical limits, and
+            software logic is what mechatronics is really about.
+          </p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ====================================================== -->
+    <!--  SECTION 6 — THE TEAM                                   -->
     <!--  Contains: Team member cards with avatar placeholders   -->
     <!-- ====================================================== -->
-    <section id="team" class="py-16 md:py-24">
+    <section id="team" class="bg-gray-50 py-16 md:py-24">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <h2 class="text-3xl font-bold text-gray-900 mb-2">The Team</h2>
