@@ -112,20 +112,11 @@
             ME210: Introduction to Mechatronics — Stanford University
           </p>
 
-          <!--
-            ============================================================
-            HERO IMAGE / VIDEO PLACEHOLDER
-            Replace the div below with an <img> or <video> tag pointing
-            to your media file in the assets/ folder. Example:
-
-              <img src="assets/hero-robot.jpg"
-                   alt="Our curling robot on the competition table"
-                   class="mx-auto rounded-lg shadow-2xl max-w-full" />
-            ============================================================
-          -->
-          <div class="placeholder-box mx-auto max-w-4xl aspect-video rounded-lg flex items-center justify-center">
-            <span class="placeholder-label">Hero Image / Video — Robot on Competition Table</span>
-          </div>
+          <img
+            src="assets/hero-robot.jpg"
+            alt="Our curling robot on the competition table"
+            class="mx-auto rounded-lg shadow-2xl max-w-full w-full max-w-4xl aspect-video object-cover"
+          />
         </div>
       </div>
 
@@ -164,96 +155,118 @@
 
         <h2 class="text-3xl font-bold text-gray-900 mb-2">Mechanical Design</h2>
         <p class="text-gray-500 mb-12 max-w-2xl">
-          Explore our robot's CAD model in 3D and review the key mechanical subsystems.
+          We exported three CAD assemblies as <code class="text-xs bg-gray-200 px-1 rounded">.glb</code> files
+          (chassis, flywheel launcher, motor coupler). Use the buttons to preview each part in the main viewer,
+          or inspect all three in the row below.
         </p>
 
-        <!-- ================================================== -->
-        <!--  3D MODEL VIEWER (Google Model Viewer)              -->
-        <!--                                                      -->
-        <!--  HOW TO USE YOUR OWN 3D MODEL:                       -->
-        <!--  1. Export your SolidWorks / Fusion 360 / OnShape    -->
-        <!--     assembly as a .GLB or .GLTF file.                -->
-        <!--  2. Place the file in the assets/ folder, e.g.       -->
-        <!--     assets/robot-assembly.glb                        -->
-        <!--  3. Change the "src" attribute below from the sample -->
-        <!--     URL to your local path:                          -->
-        <!--       src="assets/robot-assembly.glb"                -->
-        <!--  4. Adjust camera-orbit for a good default angle.    -->
-        <!--                                                      -->
-        <!--  The viewer supports:                                -->
-        <!--    - Mouse drag to rotate                            -->
-        <!--    - Scroll to zoom                                  -->
-        <!--    - Auto-rotation (remove auto-rotate to disable)   -->
-        <!-- ================================================== -->
-        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-16">
+        <!--
+          3D CAD paths (spaces in filenames use %20 in URLs):
+            assets/chassis.glb
+            assets/SpeedMotorCoupler.glb
+            assets/Puck%20wheel%20launcher.glb
+          To add a full-robot assembly later, drop robot.glb in assets/ and set id="cad-model-main" src
+          plus a new button in #cad-model-tabs with data-cad-src="assets/robot.glb".
+        -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-4">
+          <div
+            id="cad-model-tabs"
+            class="flex flex-wrap gap-2 p-4 border-b border-gray-100 bg-gray-50"
+            role="tablist"
+            aria-label="CAD part selector"
+          >
+            <button
+              type="button"
+              class="cad-tab px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-cardinal text-white"
+              data-cad-src="assets/chassis.glb"
+              data-cad-alt="Acrylic chassis CAD model"
+            >
+              Chassis
+            </button>
+            <button
+              type="button"
+              class="cad-tab px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-gray-200 text-gray-800 hover:bg-gray-300"
+              data-cad-src="assets/Puck%20wheel%20launcher.glb"
+              data-cad-alt="Flywheel puck launcher CAD model"
+            >
+              Flywheel launcher
+            </button>
+            <button
+              type="button"
+              class="cad-tab px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-gray-200 text-gray-800 hover:bg-gray-300"
+              data-cad-src="assets/SpeedMotorCoupler.glb"
+              data-cad-alt="Motor coupler / shaft CAD model"
+            >
+              Motor coupler
+            </button>
+          </div>
           <model-viewer
-            id="robot-model"
-            src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-            alt="3D model of the ME210 autonomous curling robot"
+            id="cad-model-main"
+            src="assets/chassis.glb"
+            alt="Acrylic chassis CAD model"
             camera-controls
             auto-rotate
             shadow-intensity="1"
             camera-orbit="45deg 55deg 2.5m"
             style="width: 100%; height: 500px;"
-            class="bg-gray-100"
-          >
-            <div class="absolute bottom-4 left-4 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full">
-              Drag to rotate · Scroll to zoom
-            </div>
-          </model-viewer>
+            class="bg-gray-100 block"
+          ></model-viewer>
         </div>
+        <p class="text-sm text-gray-500 mb-16">Drag to rotate · Scroll to zoom · Auto-rotate preview</p>
 
-        <!-- Component Image Grid -->
-        <h3 class="text-xl font-semibold text-gray-900 mb-6">Key Components</h3>
+        <h3 class="text-xl font-semibold text-gray-900 mb-6">Key components (3D)</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-          <!-- Component 1: Acrylic Chassis -->
           <figure class="bg-white rounded-xl shadow-md overflow-hidden">
-            <!--
-              Replace the placeholder div with:
-              <img src="assets/acrylic-chassis.jpg" alt="Laser-cut acrylic chassis" class="w-full h-72 object-cover" />
-            -->
-            <div class="placeholder-box w-full h-72 flex items-center justify-center">
-              <span class="placeholder-label">Acrylic Chassis Photo</span>
-            </div>
+            <model-viewer
+              src="assets/chassis.glb"
+              alt="Acrylic chassis"
+              camera-controls
+              shadow-intensity="1"
+              camera-orbit="45deg 55deg 1.8m"
+              style="width: 100%; height: 288px;"
+              class="bg-gray-100 block"
+            ></model-viewer>
             <figcaption class="p-4">
-              <h4 class="font-semibold text-gray-900 mb-1">Acrylic Chassis</h4>
+              <h4 class="font-semibold text-gray-900 mb-1">Acrylic chassis</h4>
               <p class="text-sm text-gray-500">
-                Laser-cut acrylic base plate providing a rigid, lightweight frame for all subsystems.
+                Laser-cut acrylic base plate — rigid frame for drivetrain, electronics, and launcher subsystems.
               </p>
             </figcaption>
           </figure>
 
-          <!-- Component 2: 3D Printed Motor Couplers -->
           <figure class="bg-white rounded-xl shadow-md overflow-hidden">
-            <!--
-              Replace the placeholder div with:
-              <img src="assets/motor-couplers.jpg" alt="3D printed motor couplers" class="w-full h-72 object-cover" />
-            -->
-            <div class="placeholder-box w-full h-72 flex items-center justify-center">
-              <span class="placeholder-label">3D Printed Motor Couplers Photo</span>
-            </div>
+            <model-viewer
+              src="assets/SpeedMotorCoupler.glb"
+              alt="3D printed motor coupler"
+              camera-controls
+              shadow-intensity="1"
+              camera-orbit="45deg 55deg 1.2m"
+              style="width: 100%; height: 288px;"
+              class="bg-gray-100 block"
+            ></model-viewer>
             <figcaption class="p-4">
-              <h4 class="font-semibold text-gray-900 mb-1">3D Printed Motor Couplers</h4>
+              <h4 class="font-semibold text-gray-900 mb-1">Motor coupler (shaft)</h4>
               <p class="text-sm text-gray-500">
-                Custom PLA couplers connecting DC motor shafts to the mecanum wheel hubs with press-fit tolerances.
+                Printed coupler transferring torque from the motor to the wheel or launcher shaft.
               </p>
             </figcaption>
           </figure>
 
-          <!-- Component 3: Angled Puck Slide -->
           <figure class="bg-white rounded-xl shadow-md overflow-hidden">
-            <!--
-              Replace the placeholder div with:
-              <img src="assets/puck-slide.jpg" alt="Angled puck slide mechanism" class="w-full h-72 object-cover" />
-            -->
-            <div class="placeholder-box w-full h-72 flex items-center justify-center">
-              <span class="placeholder-label">Angled Puck Slide Photo</span>
-            </div>
+            <model-viewer
+              src="assets/Puck%20wheel%20launcher.glb"
+              alt="Flywheel puck launcher"
+              camera-controls
+              shadow-intensity="1"
+              camera-orbit="45deg 55deg 1.8m"
+              style="width: 100%; height: 288px;"
+              class="bg-gray-100 block"
+            ></model-viewer>
             <figcaption class="p-4">
-              <h4 class="font-semibold text-gray-900 mb-1">Angled Puck Slide</h4>
+              <h4 class="font-semibold text-gray-900 mb-1">Flywheel / puck launcher</h4>
               <p class="text-sm text-gray-500">
-                Gravity-fed slide delivering pucks to the flywheel launcher at a consistent angle for reliable shots.
+                Launcher assembly including flywheels for accelerating the puck toward the target zone.
               </p>
             </figcaption>
           </figure>
@@ -275,16 +288,14 @@
           Schematics, wiring diagrams, and the stories behind our power system challenges.
         </p>
 
-        <!-- Row 1: Main Power Distribution -->
+        <!-- Row 1: Main Power Distribution (KiCad export — replace with a dedicated power sheet if you split schematics) -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           <figure class="bg-white rounded-xl shadow-md overflow-hidden">
-            <!--
-              Replace the placeholder div with:
-              <img src="assets/power-distribution.png" alt="Main power distribution schematic" class="w-full h-full object-contain p-4" />
-            -->
-            <div class="placeholder-box w-full min-h-[400px] flex items-center justify-center">
-              <span class="placeholder-label">Main Power Distribution Schematic</span>
-            </div>
+            <img
+              src="assets/kicad.png"
+              alt="KiCad schematic — power distribution and related circuitry"
+              class="w-full min-h-[400px] object-contain p-4 bg-gray-50"
+            />
           </figure>
           <div class="flex flex-col justify-center">
             <h3 class="text-xl font-semibold text-gray-900 mb-4">Main Power Distribution</h3>
@@ -325,26 +336,25 @@
             </p>
           </div>
           <figure class="bg-white rounded-xl shadow-md overflow-hidden lg:order-2">
-            <!--
-              Replace the placeholder div with:
-              <img src="assets/arduino-wiring.png" alt="Arduino Mega wiring diagram" class="w-full h-full object-contain p-4" />
-            -->
-            <div class="placeholder-box w-full min-h-[400px] flex items-center justify-center">
-              <span class="placeholder-label">Arduino Mega Wiring Diagram</span>
-            </div>
+            <img
+              src="assets/kicad.png"
+              alt="KiCad schematic — Arduino Mega and control wiring"
+              class="w-full min-h-[400px] object-contain p-4 bg-gray-50"
+            />
+            <figcaption class="px-4 pb-4 text-xs text-gray-400">
+              Same KiCad project export; add a separate wiring diagram image here if you export one.
+            </figcaption>
           </figure>
         </div>
 
-        <!-- Row 3: High-Current Motor Driver Circuits -->
+        <!-- Row 3: High-current motor driver (photo + schematic text — swap in a KiCad driver sheet if available) -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <figure class="bg-white rounded-xl shadow-md overflow-hidden">
-            <!--
-              Replace the placeholder div with:
-              <img src="assets/motor-drivers.png" alt="High-current motor driver circuit schematic" class="w-full h-full object-contain p-4" />
-            -->
-            <div class="placeholder-box w-full min-h-[400px] flex items-center justify-center">
-              <span class="placeholder-label">High-Current Motor Driver Circuit Schematic</span>
-            </div>
+            <img
+              src="assets/motordriver%20high%20current.jpg"
+              alt="High-current motor driver hardware"
+              class="w-full min-h-[400px] object-contain p-4 bg-gray-50"
+            />
           </figure>
           <div class="flex flex-col justify-center">
             <h3 class="text-xl font-semibold text-gray-900 mb-4">High-Current Motor Driver Circuits</h3>

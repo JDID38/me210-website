@@ -35,17 +35,18 @@ Every placeholder is a gray dashed box with a label. To swap one in:
      class="mx-auto rounded-lg shadow-2xl max-w-full" />
 ```
 
-### 3D CAD Model
+### 3D CAD models (`.glb`)
 
-The Mechanical Design section includes a `<model-viewer>` component. To use your own model:
+The Mechanical section loads **three** parts: `chassis.glb`, `SpeedMotorCoupler.glb`, and `Puck wheel launcher.glb` (spaces in filenames use `%20` in `src`, e.g. `Puck%20wheel%20launcher.glb`).
 
-1. Export your assembly from SolidWorks / Fusion 360 / OnShape as a `.glb` or `.gltf` file.
-2. Place it in `assets/` (e.g. `assets/robot-assembly.glb`).
-3. Change the `src` attribute on the `<model-viewer>` tag:
+- The **large viewer** at the top has buttons to switch models; behavior is handled in `main.js`.
+- The **three cards** below each embed a `<model-viewer>` for the same files.
 
-```html
-<model-viewer src="assets/robot-assembly.glb" ...>
-```
+To add a **single full-robot assembly** later, export one `robot.glb` into `assets/`, set `id="cad-model-main"` `src` to that file, and add another `<button class="cad-tab" ...>` in `#cad-model-tabs` with `data-cad-src` and `data-cad-alt`.
+
+### KiCad / electrical images
+
+Electrical slots use `assets/kicad.png` (schematic export) and `assets/motordriver high current.jpg`. Export additional PNGs from KiCad for dedicated “power only” or “wiring only” figures and update the corresponding `<img src="...">` paths in `index.html`.
 
 ### Team Members
 

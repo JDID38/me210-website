@@ -54,4 +54,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('scroll', updateActiveLink, { passive: true });
   updateActiveLink();
+
+
+  /* ---- CAD model tabs (Mechanical section main viewer) ---- */
+
+  const cadMain = document.getElementById('cad-model-main');
+  const cadTabs = document.querySelectorAll('.cad-tab');
+
+  if (cadMain && cadTabs.length) {
+    cadTabs.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const src = btn.getAttribute('data-cad-src');
+        const alt = btn.getAttribute('data-cad-alt') || 'CAD model';
+        if (src) cadMain.setAttribute('src', src);
+        cadMain.setAttribute('alt', alt);
+
+        cadTabs.forEach((b) => {
+          b.classList.remove('bg-cardinal', 'text-white');
+          b.classList.add('bg-gray-200', 'text-gray-800', 'hover:bg-gray-300');
+        });
+        btn.classList.remove('bg-gray-200', 'text-gray-800', 'hover:bg-gray-300');
+        btn.classList.add('bg-cardinal', 'text-white');
+      });
+    });
+  }
 });
