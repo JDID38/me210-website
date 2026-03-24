@@ -127,9 +127,9 @@
         <h2 class="text-3xl font-bold text-gray-900 mb-6">Project Overview</h2>
         <p class="text-gray-600 mb-4">
           Our team designed and built an autonomous curling robot for the ME210 final competition.
-          We initially brainstormed the simplest possible approach&mdash;a robot that would just
-          drive forward and push the puck toward the target&mdash;but early kinematic models showed
-          that controlling a pushing trajectory would be too imprecise. We pivoted to a stationary
+          We initially brainstormed the simplest possible approach: a robot that would just
+          drive forward and push the puck toward the target. But early kinematic models showed
+          that controlling a pushing trajectory would be too imprecise, so we pivoted to a stationary
           flywheel launcher design early in the process and never looked back.
         </p>
         <p class="text-gray-600 mb-4">
@@ -137,7 +137,7 @@
           after our first Duron frame proved too weak), a dual-flywheel launcher with 3D-printed
           motor couplers, and a servo-driven puck stacker. An Arduino Mega runs a fully non-blocking
           state machine that follows a line across the table, strafes into position, and executes a
-          timed launch sequence&mdash;all without a single call to
+          timed launch sequence, all without a single call to
           <code class="bg-gray-200 px-1 py-0.5 rounded text-sm">delay()</code>.
         </p>
         <p class="text-gray-600">
@@ -159,14 +159,9 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <h2 class="text-3xl font-bold text-gray-900 mb-2">Mechanical Design</h2>
-        <p class="text-gray-500 mb-12 max-w-3xl">
-          The mechanical architecture was built entirely around our laser-cut acrylic chassis. We
-          chose acrylic after our initial Duron prototype proved too flexible&mdash;we needed a
-          completely rigid foundation that would not vibrate when the high-speed flywheels were
-          spinning. Every mounting hole was mapped out in CAD before manufacturing, and the robot
-          uses a unique angled structure: an extension of the puck slide doubles as a component
-          platform, guiding pucks smoothly into the launcher while giving the flywheels full
-          contact to grip and fire. Explore each subsystem in 3D below.
+        <p class="text-gray-500 mb-6 max-w-3xl">
+          Explore each subsystem in the interactive 3D viewer, then read the full story of how
+          the chassis, drivetrain, and launcher came together below.
         </p>
 
         <!--
@@ -239,41 +234,31 @@
         </div>
         <p class="text-sm text-gray-500 mb-12">Drag to rotate · Scroll to zoom · Auto-rotate preview</p>
 
-        <!-- Mechanical design write-up -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-          <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">Chassis &amp; Assembly</h3>
-            <p class="text-gray-600 text-sm mb-3">
-              Heavy DC drive motors and the main flywheel assembly are bolted directly to the
-              bottom plate to keep the center of gravity low and improve driving stability. The
-              electronics&mdash;Arduino Mega, motor drivers, and wiring&mdash;are securely mounted
-              above, away from spinning wheels and the puck loading area. Thick machine screws lock
-              the 3D-printed motor mounts to the front of the acrylic base, and the servo plus
-              stacker wheel are bolted near the center to feed the angled slide.
+        <!-- Full mechanical design narrative -->
+        <article class="max-w-4xl mx-auto mb-16">
+          <h3 class="text-xl font-semibold text-gray-900 mb-4">The Chassis Story</h3>
+          <div class="text-gray-600 space-y-4">
+            <p>
+              The mechanical architecture of our curling robot was built entirely around our laser-cut acrylic chassis. We chose acrylic after our initial Duron prototype proved too flexible, as we needed a completely rigid foundation that would not vibrate when the high-speed flywheels were spinning. We designed this main base plate in our computer-aided design software, carefully mapping out pre-cut mounting holes for every single hardware component before we actually manufactured it.
             </p>
-            <p class="text-gray-600 text-sm">
-              The line-following sensor array sits on a small bracket extending off the front edge
-              of the bottom plate, placing the five IR sensors at the exact height needed to read
-              the track tape accurately without scraping the floor.
+            <p>
+              To keep the physical assembly organized and functional, we built the robot using a unique angled structure. Instead of making a second horizontal platform for our components, we designed an extension to the puck slide. This extension was built with a slight angle, guiding the pucks smoothly into the firing mechanism while still allowing the high-speed flywheels full contact to grip and launch them. We bolted the heavy DC drive motors and the main flywheel assembly directly to the bottom plate to keep our center of gravity low, which improved our driving stability. The electronics, including our Arduino Mega and motor drivers, were securely mounted to keep the wiring safe from the spinning wheels and the puck loading area.
+            </p>
+            <p>
+              Connecting the custom launcher parts to this rigid chassis required a lot of care. We used thick machine screws to tightly lock our 3D-printed motor mounts to the front of the acrylic base plate. The servo and the puck stacker wheel were also bolted directly near the central section to feed the angled slide. The line-following sensor array was attached to a small bracket that extended just off the front edge of the bottom plate, placing the sensors at the exact height needed to read the track tape accurately without scraping the floor.
             </p>
           </div>
-          <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">Why Mecanum Wheels</h3>
-            <p class="text-gray-600 text-sm mb-3">
-              The curling field requires the robot to find tape lines and align with a distant
-              target. Standard wheels would force the robot to pivot to correct its path, which
-              would instantly ruin the aim of our stationary launcher. Mecanum wheels solve this
-              with holonomic movement&mdash;the robot can strafe directly left or right to center
-              on a line without ever changing its forward-facing angle.
+
+          <h3 class="text-xl font-semibold text-gray-900 mt-10 mb-4">Why Mecanum Wheels</h3>
+          <div class="text-gray-600 space-y-4">
+            <p>
+              The curling field requires the robot to find specific tape lines and align perfectly with a distant target. Standard wheels would require the robot to drive forward and then physically pivot to correct its path. Pivoting changes the angle of the robot, which would instantly ruin the aim of our stationary launcher. Mecanum wheels completely solve this problem by allowing holonomic movement. This special design lets the robot strafe directly left or right to center itself on a line without ever changing its forward-facing angle.
             </p>
-            <p class="text-gray-600 text-sm">
-              Even though we had to adapt our chassis mounting brackets at the last minute to fit
-              the borrowed lab wheels, it worked. Sliding smoothly sideways into the starting box
-              or centering over the launch line without rotating kept our code simple and our
-              mechanical aim perfectly straight.
+            <p>
+              Even though we had to adapt our chassis mounting brackets at the last minute to fit the borrowed lab wheels, this actually worked. Being able to slide smoothly sideways into the starting box or perfectly center the robot over the launch line without rotating allowed our code to remain simple and our mechanical aim to stay perfectly straight.
             </p>
           </div>
-        </div>
+        </article>
 
         <h3 class="text-xl font-semibold text-gray-900 mb-6">Key components (3D)</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -391,7 +376,7 @@
         <h2 class="text-3xl font-bold text-gray-900 mb-2">Electrical Design</h2>
         <p class="text-gray-500 mb-12 max-w-2xl">
           Because we spent most of our timeline on mechanical redesigns, electrical integration
-          happened fast&mdash;and exposed power limits we had not anticipated. Below is the KiCad
+          happened fast and exposed power limits we had not anticipated. Below is the KiCad
           schematic for the full system, followed by what we learned about each subsystem.
         </p>
 
@@ -436,8 +421,8 @@
               and five analog line sensors (A0, A12-A15).
             </p>
             <p class="text-gray-600 text-sm">
-              We wrote small, separate test scripts for each subsystem first&mdash;flywheels,
-              servo dropper, drive motors&mdash;to understand real-world behavior before combining
+              We wrote small, separate test scripts for each subsystem first (flywheels,
+              servo dropper, drive motors) to understand real-world behavior before combining
               everything into one program. This modular approach was critical because our coding
               phase started very late after weeks of mechanical rebuilds.
             </p>
@@ -961,13 +946,13 @@ void respToRightEdgeWhite() { }</code></pre>
           <div>
             <h3 class="text-xl font-semibold text-gray-900 mb-4">State Machine &amp; Non-Blocking Launch Sequence</h3>
             <p class="text-gray-500 mb-4 max-w-3xl">
-              Basic linear programming was not enough&mdash;the robot needed to read line sensors
+              Basic linear programming was not enough. The robot needed to read line sensors
               constantly while also ramping flywheels over several seconds. We completely removed
               <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">delay()</code> and built
               a state machine where every timed action uses
               <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">millis()</code> comparisons.
               The LAUNCH state sequences flywheel spin-up, a 500 ms lead, a servo sweep, and a
-              1-second lag&mdash;all without blocking the main loop.
+              1-second lag, all without blocking the main loop.
             </p>
             <div class="code-block rounded-xl overflow-hidden shadow-md">
               <div class="code-block-header px-4 py-2 text-xs font-mono text-gray-400">
@@ -1202,56 +1187,39 @@ uint8_t testForLeftWhite() {
 
         <h2 class="text-3xl font-bold text-gray-900 mb-6">Reflection</h2>
 
-        <div class="prose prose-gray max-w-none text-gray-600 space-y-4">
+        <div class="text-gray-600 space-y-4">
           <p>
-            Looking back, the single biggest lesson from this project is that mechatronics demands
-            a solid physical foundation before any programming can happen. We spent the first several
-            weeks entirely on CAD and physical prototyping with Caleb and Daniel, which quickly exposed
-            hidden structural flaws we never would have caught on paper. When our Duron chassis cracked
-            under motor vibrations, we had no choice but to recut the entire frame in acrylic&mdash;a
-            setback that cost days but ultimately gave us a far more robust platform.
+            Looking back at the development of our autonomous curling robot for ME210, our team focused heavily on mechanical design long before we wrote any code. Working with Caleb and Daniel, our first idea during the brainstorming phase was to build the simplest robot possible. We wanted to design a robot with no flywheels that would just drive forward and physically push the puck toward the target. Another team actually did this successfully. However, when we looked at the kinematics and the required precision in our early models, we realized this pushing method would be too difficult to control. Because of this, we changed our plan to a stationary launcher design very early in the process.
           </p>
           <p>
-            The cascading logistics problems taught us adaptability. Our ordered mecanum wheels never
-            arrived, so we borrowed a set from the university lab. Those wheels had a completely
-            different size and friction coefficient from what we had modeled, forcing rapid redesigns
-            of every mounting point on the new acrylic chassis. Then connecting the high-speed DC
-            motors to the flywheel hubs created a terrible wobble that absorbed all the kinetic
-            energy. Off-the-shelf hardware simply could not achieve the tolerances we needed, so we
-            turned to 3D printing to iterate on custom motor shafts and couplers until we got a
-            precise fit. Even the servo kept slipping against the puck stacker wheel until we added
-            a screw hole to physically pin the servo horn in place.
+            We spent the first few weeks heavily focused on computer-aided design and physical prototyping, which quickly revealed hidden structural flaws. During our early testing, we discovered that our initial choice of material for the chassis was not strong enough. We originally laser-cut the main frame out of Duron, but it lacked the robustness needed to support the heavy motors and withstand the vibrations of the launcher. Because of this structural weakness, we had to completely recut and assemble the chassis using acrylic to ensure a rigid and durable foundation.
           </p>
           <p>
-            Because so much time went into perfecting these physical mechanisms, the coding phase was
-            pushed to the very end. We knew we had to be extremely efficient, so we wrote small
-            isolated test scripts for the flywheels, the servo dropper, and the drive motors before
-            combining anything. That modular approach paid off: when we merged everything into one
-            program, the interfaces were already understood and tested.
+            Once we had a stronger acrylic frame, our hardware integration faced an immediate logistical setback. The mecanum wheels we ordered were not delivered in time for the assembly. To keep the project moving, we had to borrow standard mecanum wheels from the university laboratory. These wheels were not in our original design, and they had a very different size and friction coefficient than what we had modeled. This forced us to rapidly adapt our new acrylic chassis and its mounting points to fit the unexpected parts.
           </p>
           <p>
-            Even so, real-world integration surfaced problems no bench test could. Spinning up the
-            heavy flywheels pulled a massive stall current that burned through our first motor drivers.
-            The cheap DC motors and borrowed wheels made the robot drift sideways, requiring hours of
-            per-wheel speed tuning. Line sensors gave phantom detections because we had not calibrated
-            their analog thresholds to the actual room lighting. And driving out of the starting box
-            was nearly impossible because the zone boundaries use the exact same black tape the robot
-            was chasing&mdash;a problem we solved with arming delays that temporarily ignore the edge
-            sensors after leaving a zone.
+            While adapting the frame to the borrowed wheels, we found another big mechanical issue with the launcher itself. Connecting our high-speed DC motors to the curling flywheels was much harder than we expected. Standard hardware parts could not attach the motor shafts to our custom wheel hubs without creating a terrible wobble that absorbed all the kinetic energy. To fix this, we used 3D printing to design and test custom motor shafts and couplers to get the precise fit we needed. We also fixed a major issue with the puck loading mechanism during this mechanical phase. The servo kept slipping against the puck stacker wheel because friction was not strong enough. We solved this by adding a specific screw hole to pin the servo horn directly to the stacker wheel, creating a solid physical connection.
           </p>
           <p>
-            Solving these final software bugs was a race against time. Our team was literally the very
-            last one to get checked off before the competition started. But that stressful push proved
-            the design was robust: in the first round our robot ran the state machine perfectly, followed
-            the line, and placed the puck right on the target while our opponent got stuck on the table.
+            Because we spent so much of our timeline perfecting these physical mechanisms and rebuilding the chassis out of acrylic, the coding part was pushed to the very end of the process. We knew we had to be highly efficient with our remaining time, so we took a modular approach. Instead of trying to write the whole program at once, we wrote small, separate test scripts to understand how the high-current flywheels and the servo puck dropper worked in reality before combining them.
           </p>
           <p>
-            Winning that round after checking off last felt incredible. More than anything, this project
-            showed us the real cost of the gap between a CAD model and a working robot on a competition
-            table. Every fix&mdash;the acrylic recut, the 3D-printed couplers, the firmware soft-start,
-            the sensor calibration&mdash;was a bridge between what we designed and what physics actually
-            allowed. That constant feedback loop between mechanical constraints, electrical limits, and
-            software logic is what mechatronics is really about.
+            When we finally started running our code on the fully built robot, we immediately hit a physical power limit. Spinning up the heavy flywheels pulled a massive initial stall current. During these first code tests, we actually burned a few motor drivers because they could not handle the power spikes. Because of this electrical failure, we had to write smooth software ramp-ups in our code and use better power electronics to handle the high current safely.
+          </p>
+          <p>
+            As we combined these separate test scripts into one main program, we saw that basic linear programming was not enough. We had to build a non-blocking state machine to manage what the robot was doing. We completely removed delay functions from our code and only used timer evaluations. This allowed the robot to read its line sensors constantly while also spinning up the motors over several seconds. However, when we tested the driving logic, we found that small differences in the cheap DC motors and the borrowed lab wheels made the robot lean and drift to the side. We had to spend a lot of time manually tuning the base motor speeds in our code to fix this crab-walk effect and make the robot drive straight.
+          </p>
+          <p>
+            After we fixed the driving code, we moved to the competition table to test the whole system, but our line sensors started failing. One of the worst issues was getting phantom line detections. We learned how important it is to calibrate the analog sensor thresholds based on the actual lighting in the room to filter out ambient shadows from the real black tape. Without this calibration, the robot would just strafe off the track or stop its motors for no reason.
+          </p>
+          <p>
+            Fixing the sensor thresholds helped the robot follow the line, but it revealed a final logic flaw in our code. Driving out of the starting box and the launch zone was very tricky because those areas are surrounded by the exact same black tape the robot is looking for. We solved this issue by adding arming delays to the code. We programmed the robot to intentionally ignore the edge sensors for a short time when leaving a zone, giving the physical chassis enough time to drive past the tape boundaries.
+          </p>
+          <p>
+            Solving these final software bugs was a massive race against time, especially since we started the coding phase so late. All of these hardware adaptations, material changes, and software problems added up and pushed our schedule to the absolute limit. In fact, our team was the very last one to get checked off right before the competition started. However, this stressful final push proved that our design was robust. In the very first round of the competition, our hard work paid off. The opponent robot had a software bug and got stuck on the table. Meanwhile, our robot ran its state machine perfectly, followed the line, and placed the puck right on the target.
+          </p>
+          <p>
+            Winning that first round after checking off last felt amazing for the whole team. This project really showed us that mechatronics requires a solid physical foundation before any programming can happen. Moving from CAD models to a moving robot on the competition table forced us to constantly fix the gap between our early mechanical designs, electrical limits, and late-stage software logic.
           </p>
         </div>
       </div>
@@ -1270,51 +1238,30 @@ uint8_t testForLeftWhite() {
           Meet the people behind the robot.
         </p>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
 
-          <!--
-            TEAM MEMBER CARD TEMPLATE
-            Duplicate or edit these cards for each team member.
-            Replace:
-              - The placeholder avatar div with an <img> tag
-              - "Team Member Name" with the real name
-              - "Role / Specialization" with their contribution
-          -->
-
-          <!-- Member 1 -->
           <div class="bg-white rounded-xl shadow-md p-6 text-center">
             <div class="w-28 h-28 rounded-full bg-gray-200 mx-auto mb-4 flex items-center justify-center">
               <span class="text-gray-400 text-xs">Photo</span>
             </div>
-            <h4 class="font-semibold text-gray-900">Team Member 1</h4>
-            <p class="text-sm text-gray-500 mt-1">Role / Specialization</p>
+            <h4 class="font-semibold text-gray-900">Daniel Trejo</h4>
+            <p class="text-sm text-gray-500 mt-1">Software</p>
           </div>
 
-          <!-- Member 2 -->
           <div class="bg-white rounded-xl shadow-md p-6 text-center">
             <div class="w-28 h-28 rounded-full bg-gray-200 mx-auto mb-4 flex items-center justify-center">
               <span class="text-gray-400 text-xs">Photo</span>
             </div>
-            <h4 class="font-semibold text-gray-900">Team Member 2</h4>
-            <p class="text-sm text-gray-500 mt-1">Role / Specialization</p>
+            <h4 class="font-semibold text-gray-900">Caleb Nangle</h4>
+            <p class="text-sm text-gray-500 mt-1">Electronics / Mechanical Hardware</p>
           </div>
 
-          <!-- Member 3 -->
           <div class="bg-white rounded-xl shadow-md p-6 text-center">
             <div class="w-28 h-28 rounded-full bg-gray-200 mx-auto mb-4 flex items-center justify-center">
               <span class="text-gray-400 text-xs">Photo</span>
             </div>
-            <h4 class="font-semibold text-gray-900">Team Member 3</h4>
-            <p class="text-sm text-gray-500 mt-1">Role / Specialization</p>
-          </div>
-
-          <!-- Member 4 -->
-          <div class="bg-white rounded-xl shadow-md p-6 text-center">
-            <div class="w-28 h-28 rounded-full bg-gray-200 mx-auto mb-4 flex items-center justify-center">
-              <span class="text-gray-400 text-xs">Photo</span>
-            </div>
-            <h4 class="font-semibold text-gray-900">Team Member 4</h4>
-            <p class="text-sm text-gray-500 mt-1">Role / Specialization</p>
+            <h4 class="font-semibold text-gray-900">Nael Ghoundale</h4>
+            <p class="text-sm text-gray-500 mt-1">Electronics / Mechanical Hardware</p>
           </div>
 
         </div>
