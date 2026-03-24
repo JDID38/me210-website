@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 720" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 1 L9 5 L0 9z" fill="#374151"/>
+    </marker>
+    <marker id="ah-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 1 L9 5 L0 9z" fill="#8C1515"/>
+    </marker>
+    <marker id="ah-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 1 L9 5 L0 9z" fill="#6b7280"/>
+    </marker>
+  </defs>
+
+  <rect width="820" height="720" rx="16" fill="#f9fafb"/>
+
+  <text x="410" y="30" text-anchor="middle" font-size="16" font-weight="700" fill="#111827">Robot State Machine</text>
+  <text x="410" y="48" text-anchor="middle" font-size="11" fill="#6b7280">Line-following with autonomous launch sequence</text>
+
+  <!-- ===== Start indicator ===== -->
+  <circle cx="400" cy="64" r="6" fill="#111827"/>
+  <line x1="400" y1="70" x2="400" y2="80" stroke="#374151" stroke-width="2" marker-end="url(#ah)"/>
+
+  <!-- ===== INIT ===== -->
+  <rect x="315" y="82" width="170" height="72" rx="12" fill="#fff" stroke="#8C1515" stroke-width="2.5"/>
+  <text x="400" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">INIT</text>
+  <text x="400" y="138" text-anchor="middle" font-size="11" fill="#6b7280" font-family="'Fira Code',monospace">strafeRight()</text>
+
+  <!-- INIT -> FWD -->
+  <line x1="400" y1="154" x2="400" y2="200" stroke="#374151" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="448" y="182" font-size="10" fill="#8C1515" font-weight="500">center black</text>
+
+  <!-- ===== FWD ===== -->
+  <rect x="315" y="202" width="170" height="72" rx="12" fill="#fff" stroke="#374151" stroke-width="2"/>
+  <text x="400" y="232" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">FWD</text>
+  <text x="400" y="258" text-anchor="middle" font-size="11" fill="#6b7280" font-family="'Fira Code',monospace">moveForward()</text>
+
+  <!-- FWD -> LEFT -->
+  <line x1="342" y1="274" x2="210" y2="358" stroke="#374151" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="248" y="316" font-size="10" fill="#8C1515" font-weight="500">left black</text>
+
+  <!-- FWD -> RIGHT -->
+  <line x1="458" y1="274" x2="610" y2="358" stroke="#374151" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="540" y="316" font-size="10" fill="#8C1515" font-weight="500">right black</text>
+
+  <!-- FWD -> LAUNCH (dashed red, key transition) -->
+  <line x1="400" y1="274" x2="400" y2="500" stroke="#8C1515" stroke-width="2" stroke-dasharray="6 3" marker-end="url(#ah-r)"/>
+  <text x="412" y="400" font-size="10" fill="#8C1515" font-weight="600">right edge black</text>
+
+  <!-- ===== LEFT ===== -->
+  <rect x="75" y="360" width="170" height="72" rx="12" fill="#fff" stroke="#374151" stroke-width="2"/>
+  <text x="160" y="390" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">LEFT</text>
+  <text x="160" y="416" text-anchor="middle" font-size="11" fill="#6b7280" font-family="'Fira Code',monospace">strafeLeft()</text>
+
+  <!-- LEFT -> FWD (curved return, dashed) -->
+  <path d="M 120,360 C 120,298 286,262 315,242" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ah-g)"/>
+  <text x="178" y="292" font-size="9" fill="#6b7280">center black</text>
+
+  <!-- ===== RIGHT ===== -->
+  <rect x="575" y="360" width="170" height="72" rx="12" fill="#fff" stroke="#374151" stroke-width="2"/>
+  <text x="660" y="390" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">RIGHT</text>
+  <text x="660" y="416" text-anchor="middle" font-size="11" fill="#6b7280" font-family="'Fira Code',monospace">strafeRight()</text>
+
+  <!-- RIGHT -> FWD (curved return, dashed) -->
+  <path d="M 700,360 C 700,298 514,262 485,242" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ah-g)"/>
+  <text x="618" y="292" font-size="9" fill="#6b7280">center black</text>
+
+  <!-- ===== LAUNCH ===== -->
+  <rect x="315" y="502" width="170" height="72" rx="12" fill="#fff" stroke="#8C1515" stroke-width="2.5"/>
+  <text x="400" y="532" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">LAUNCH</text>
+  <text x="400" y="558" text-anchor="middle" font-size="11" fill="#6b7280" font-family="'Fira Code',monospace">spin + servo sweep</text>
+
+  <!-- Launch sub-phase annotation -->
+  <rect x="500" y="504" width="242" height="68" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="621" y="522" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">Launch sub-phases (non-blocking):</text>
+  <text x="621" y="538" text-anchor="middle" font-size="9" fill="#92400e">1. spinFlywheels() immediately</text>
+  <text x="621" y="554" text-anchor="middle" font-size="9" fill="#92400e">2. servo sweep after 500 ms lead</text>
+  <text x="621" y="568" text-anchor="middle" font-size="9" fill="#92400e">3. stop flywheels after 1 s lag</text>
+
+  <!-- LAUNCH -> STOP -->
+  <line x1="400" y1="574" x2="400" y2="620" stroke="#374151" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="446" y="602" font-size="10" fill="#6b7280" font-weight="500">lag timer done</text>
+
+  <!-- ===== STOP (terminal state  double border) ===== -->
+  <rect x="315" y="622" width="170" height="72" rx="12" fill="#fff" stroke="#374151" stroke-width="2.5"/>
+  <rect x="321" y="628" width="158" height="60" rx="9" fill="none" stroke="#374151" stroke-width="1.5"/>
+  <text x="400" y="654" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">STOP</text>
+  <text x="400" y="678" text-anchor="middle" font-size="11" fill="#6b7280" font-family="'Fira Code',monospace">stopEverything()</text>
+
+  <!-- Legend -->
+  <rect x="20" y="650" width="180" height="55" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="32" y1="670" x2="62" y2="670" stroke="#374151" stroke-width="2"/>
+  <text x="68" y="674" font-size="9" fill="#6b7280">solid = forward transition</text>
+  <line x1="32" y1="690" x2="62" y2="690" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="68" y="694" font-size="9" fill="#6b7280">dashed = return / correction</text>
+</svg>

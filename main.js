@@ -63,10 +63,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (cadMain && cadTabs.length) {
     cadTabs.forEach((btn) => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
         const src = btn.getAttribute('data-cad-src');
         const alt = btn.getAttribute('data-cad-alt') || 'CAD model';
-        if (src) cadMain.setAttribute('src', src);
+
+        if (src && cadMain.getAttribute('src') !== src) {
+          cadMain.removeAttribute('src');
+          requestAnimationFrame(() => {
+            cadMain.setAttribute('src', src);
+          });
+        }
         cadMain.setAttribute('alt', alt);
 
         cadTabs.forEach((b) => {

@@ -58,6 +58,15 @@ html {
 /* ---- Model Viewer ---- */
 model-viewer {
   --poster-color: transparent;
+  position: relative;
+  z-index: 0;
+}
+
+/* Ensure CAD tab buttons stay clickable above model-viewer overlays */
+#cad-model-tabs button {
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
 }
 
 /* ---- Selection Color ---- */

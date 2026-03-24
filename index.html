@@ -115,7 +115,7 @@
           <img
             src="assets/hero-robot.jpg"
             alt="Our curling robot on the competition table"
-            class="mx-auto rounded-lg shadow-2xl max-w-full w-full max-w-4xl aspect-video object-cover"
+            class="mx-auto rounded-lg shadow-2xl max-w-full w-full max-w-2xl aspect-video object-cover"
           />
         </div>
       </div>
@@ -171,7 +171,7 @@
         <div class="bg-white rounded-xl shadow-md overflow-hidden mb-4">
           <div
             id="cad-model-tabs"
-            class="flex flex-wrap gap-2 p-4 border-b border-gray-100 bg-gray-50"
+            class="flex flex-wrap gap-2 p-4 border-b border-gray-100 bg-gray-50 relative z-10"
             role="tablist"
             aria-label="CAD part selector"
           >
@@ -395,108 +395,241 @@
         <div class="mb-16">
           <h3 class="text-xl font-semibold text-gray-900 mb-6">State Machine Architecture</h3>
           <figure class="bg-white rounded-xl shadow-md overflow-hidden">
-            <!--
-              Replace the placeholder div with:
-              <img src="assets/state-machine.png" alt="State machine flowchart" class="w-full h-auto object-contain p-6" />
-            -->
-            <div class="placeholder-box w-full min-h-[500px] flex items-center justify-center">
-              <span class="placeholder-label">State Machine Flowchart Image</span>
-            </div>
+            <img
+              src="assets/state-machine.svg"
+              alt="State machine flowchart: INIT → FWD → LEFT/RIGHT corrections → LAUNCH → STOP"
+              class="w-full h-auto object-contain p-6"
+            />
           </figure>
         </div>
 
         <!-- Code Blocks -->
         <div class="space-y-12">
 
-          <!-- Code Block 1: Non-Blocking Timer -->
+          <!-- Code Block 1: State Machine & Non-Blocking Launch Sequence -->
           <div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">Non-Blocking Timer Code</h3>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">State Machine &amp; Non-Blocking Launch Sequence</h3>
             <p class="text-gray-500 mb-4 max-w-3xl">
               We avoided <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">delay()</code>
-              entirely. Instead, all timed actions use a lightweight non-blocking timer pattern
-              so the main loop continues checking sensors and updating state.
+              entirely. The main loop runs continuously: an incremental servo stepper
+              and edge-detected line sensors drive all state transitions without ever
+              blocking. The LAUNCH state sequences flywheels, a timed servo sweep, and
+              a lag timer using only <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">millis()</code> comparisons.
             </p>
-            <!--
-              Replace the code below with your actual non-blocking timer implementation.
-            -->
             <div class="code-block rounded-xl overflow-hidden shadow-md">
               <div class="code-block-header px-4 py-2 text-xs font-mono text-gray-400">
-                non_blocking_timer.ino
+                me210_robot.ino &mdash; state machine core
               </div>
-              <pre class="p-4 overflow-x-auto"><code class="text-sm font-mono">// Non-blocking timer utility for ME210 state machine
-// Replace this example with your actual timer code
+              <pre class="p-4 overflow-x-auto"><code class="text-sm font-mono">enum State_t {
+  INIT,    // Strafe right until center line detected
+  FWD,     // Drive forward along the line
+  LEFT,    // Correct leftward drift
+  RIGHT,   // Correct rightward drift
+  LAUNCH,  // Flywheel spin-up → servo sweep → stop
+  STOP     // All motors off (terminal)
+};
 
-static unsigned long timerStartTime = 0;
-static bool timerRunning = false;
+State_t state = INIT;
 
-void startTimer(unsigned long duration) {
-  timerStartTime = millis();
-  timerRunning = true;
-}
+// Non-blocking servo motion state
+unsigned long lastServoStepMs     = 0;
+int           servoCurrentAngle   = SERVO_START_ANGLE;
+int           servoTargetAngle    = SERVO_START_ANGLE;
 
-bool isTimerExpired(unsigned long duration) {
-  if (!timerRunning) return false;
-  if (millis() - timerStartTime >= duration) {
-    timerRunning = false;
-    return true;
+// Launch phase timing (all millis()-based, never blocks)
+unsigned long launchStartTime     = 0;
+unsigned long servoReachedEndTime = 0;
+bool          servoSweepStarted   = false;
+bool          servoReachedEnd     = false;
+
+void loop() {
+  updateServoMotion();   // non-blocking incremental servo step
+  checkGlobalEvents();   // line-sensor edge detection → state transitions
+
+  switch (state) {
+    case INIT:   strafeRight();  break;
+    case FWD:    moveForward();  break;
+    case LEFT:   strafeLeft();   break;
+    case RIGHT:  strafeRight();  break;
+
+    case LAUNCH:
+      stopMoving();
+      spinFlywheels();
+
+      // Phase 1: after FLYWHEEL_LEAD_MS (500 ms), begin servo sweep
+      if (!servoSweepStarted &amp;&amp;
+          (millis() - launchStartTime >= FLYWHEEL_LEAD_MS)) {
+        setServoTarget(SERVO_END_ANGLE);
+        servoSweepStarted = true;
+      }
+
+      // Phase 2: detect when servo reaches its end angle
+      if (servoSweepStarted &amp;&amp; !servoReachedEnd &amp;&amp;
+          isServoAtTarget() &amp;&amp;
+          servoTargetAngle == SERVO_END_ANGLE) {
+        servoReachedEnd     = true;
+        servoReachedEndTime = millis();
+      }
+
+      // Phase 3: hold flywheels for FLYWHEEL_LAG_MS (1 s), then stop
+      if (servoReachedEnd &amp;&amp;
+          (millis() - servoReachedEndTime >= FLYWHEEL_LAG_MS)) {
+        resetServoToStart();
+        state = STOP;
+      }
+      break;
+
+    case STOP:
+      stopEverything();
+      break;
   }
-  return false;
 }
 
-// Usage in main loop:
-// if (isTimerExpired(2000)) { transitionToNextState(); }</code></pre>
+// Incremental servo stepper — called every loop(), never blocks
+void updateServoMotion() {
+  if (millis() - lastServoStepMs &lt; SERVO_STEP_INTERVAL_MS) return;
+  lastServoStepMs = millis();
+  if (state != LAUNCH) return;
+
+  if (servoCurrentAngle &lt; servoTargetAngle) {
+    servoCurrentAngle += SERVO_STEP_SIZE;
+    if (servoCurrentAngle > servoTargetAngle)
+      servoCurrentAngle = servoTargetAngle;
+    launchServo.write(servoCurrentAngle);
+  } else if (servoCurrentAngle > servoTargetAngle) {
+    servoCurrentAngle -= SERVO_STEP_SIZE;
+    if (servoCurrentAngle &lt; servoTargetAngle)
+      servoCurrentAngle = servoTargetAngle;
+    launchServo.write(servoCurrentAngle);
+  }
+}
+
+// Edge-detected line sensors drive state transitions
+void checkGlobalEvents() {
+  if (state == LAUNCH) return;   // freeze line-following during launch
+  if (testForCenterBlack())      respToCenterBlack();
+  if (testForLeftBlack())        respToLeftBlack();
+  if (testForRightBlack())       respToRightBlack();
+  if (testForRightEdgeBlack())   respToRightEdgeBlack();
+  // ... symmetric white-edge handlers omitted for brevity
+}
+
+void respToCenterBlack() {
+  if (state == INIT || state == LEFT || state == RIGHT) state = FWD;
+}
+void respToLeftBlack()  { if (state == FWD) state = LEFT;  }
+void respToRightBlack() { if (state == FWD) state = RIGHT; }
+void respToRightEdgeBlack() {
+  if (state == FWD) enterLaunchState();
+}
+
+void enterLaunchState() {
+  launchStartTime   = millis();
+  servoSweepStarted = false;
+  servoReachedEnd   = false;
+  stopFlywheels();
+  state = LAUNCH;
+}</code></pre>
             </div>
           </div>
 
-          <!-- Code Block 2: Mecanum Wheel Driving Logic -->
+          <!-- Code Block 2: Mecanum Drive, Flywheels & Sensor Logic -->
           <div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">Mecanum Wheel Driving Logic</h3>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">Mecanum Drive &amp; Hardware Helpers</h3>
             <p class="text-gray-500 mb-4 max-w-3xl">
-              Mecanum wheels enable omnidirectional movement by independently controlling
-              four motors. The mixing equations translate desired X, Y, and rotation velocities
-              into per-wheel speeds.
+              Each mecanum motion primitive sets four IN1/IN2 direction pins then applies
+              per-wheel PWM speeds (individually tuned to compensate for motor variation).
+              Strafing uses a 2&times; speed multiplier for adequate lateral force.
+              Flywheel and sensor-latch logic rounds out the hardware layer.
             </p>
-            <!--
-              Replace the code below with your actual mecanum drive implementation.
-            -->
             <div class="code-block rounded-xl overflow-hidden shadow-md">
               <div class="code-block-header px-4 py-2 text-xs font-mono text-gray-400">
-                mecanum_drive.ino
+                me210_robot.ino &mdash; mecanum drive &amp; hardware
               </div>
-              <pre class="p-4 overflow-x-auto"><code class="text-sm font-mono">// Mecanum wheel velocity mixing for omnidirectional drive
-// Replace this example with your actual drive code
+              <pre class="p-4 overflow-x-auto"><code class="text-sm font-mono">// Per-wheel base speeds (tuned per-motor to drive straight)
+uint8_t flDriveSpeed = 65;
+uint8_t frDriveSpeed = 70;
+uint8_t rlDriveSpeed = 65;
+uint8_t rrDriveSpeed = 75;
 
-void mecanumDrive(int vx, int vy, int omega) {
-  // vx    = strafe velocity  (-255 to 255)
-  // vy    = forward velocity (-255 to 255)
-  // omega = rotation speed   (-255 to 255)
-
-  int frontLeft  = vy + vx + omega;
-  int frontRight = vy - vx - omega;
-  int rearLeft   = vy - vx + omega;
-  int rearRight  = vy + vx - omega;
-
-  // Clamp values to valid PWM range
-  frontLeft  = constrain(frontLeft,  -255, 255);
-  frontRight = constrain(frontRight, -255, 255);
-  rearLeft   = constrain(rearLeft,   -255, 255);
-  rearRight  = constrain(rearRight,  -255, 255);
-
-  setMotor(FRONT_LEFT_PIN,  frontLeft);
-  setMotor(FRONT_RIGHT_PIN, frontRight);
-  setMotor(REAR_LEFT_PIN,   rearLeft);
-  setMotor(REAR_RIGHT_PIN,  rearRight);
+void applyWheelSpeeds() {
+  analogWrite(FL_EN, flDriveSpeed);
+  analogWrite(FR_EN, frDriveSpeed);
+  analogWrite(RL_EN, rlDriveSpeed);
+  analogWrite(RR_EN, rrDriveSpeed);
 }
 
-void setMotor(int pin, int speed) {
-  // Set direction and PWM for a single motor
-  if (speed >= 0) {
-    digitalWrite(pin + 1, HIGH);
-    analogWrite(pin, speed);
-  } else {
-    digitalWrite(pin + 1, LOW);
-    analogWrite(pin, -speed);
+void applyWheelSpeeds(uint8_t mul) {
+  analogWrite(FL_EN, constrain((int)mul * flDriveSpeed, 0, 255));
+  analogWrite(FR_EN, constrain((int)mul * frDriveSpeed, 0, 255));
+  analogWrite(RL_EN, constrain((int)mul * rlDriveSpeed, 0, 255));
+  analogWrite(RR_EN, constrain((int)mul * rrDriveSpeed, 0, 255));
+}
+
+// Mecanum kinematics — each function sets four wheel directions
+void moveForward() {
+  applyWheelSpeeds();
+  digitalWrite(FL_IN1, HIGH); digitalWrite(FL_IN2, LOW);
+  digitalWrite(FR_IN1, HIGH); digitalWrite(FR_IN2, LOW);
+  digitalWrite(RL_IN1, HIGH); digitalWrite(RL_IN2, LOW);
+  digitalWrite(RR_IN1, HIGH); digitalWrite(RR_IN2, LOW);
+}
+
+void strafeRight() {
+  applyWheelSpeeds(2);   // 2x speed for lateral motion
+  digitalWrite(FL_IN1, HIGH); digitalWrite(FL_IN2, LOW);
+  digitalWrite(FR_IN1, LOW);  digitalWrite(FR_IN2, HIGH);
+  digitalWrite(RL_IN1, LOW);  digitalWrite(RL_IN2, HIGH);
+  digitalWrite(RR_IN1, HIGH); digitalWrite(RR_IN2, LOW);
+}
+
+void strafeLeft() {
+  applyWheelSpeeds(2);
+  digitalWrite(FL_IN1, LOW);  digitalWrite(FL_IN2, HIGH);
+  digitalWrite(FR_IN1, HIGH); digitalWrite(FR_IN2, LOW);
+  digitalWrite(RL_IN1, HIGH); digitalWrite(RL_IN2, LOW);
+  digitalWrite(RR_IN1, LOW);  digitalWrite(RR_IN2, HIGH);
+}
+
+void stopMoving() {
+  digitalWrite(FL_IN1, LOW); digitalWrite(FL_IN2, LOW);
+  digitalWrite(FR_IN1, LOW); digitalWrite(FR_IN2, LOW);
+  digitalWrite(RL_IN1, LOW); digitalWrite(RL_IN2, LOW);
+  digitalWrite(RR_IN1, LOW); digitalWrite(RR_IN2, LOW);
+  analogWrite(FL_EN, 0); analogWrite(FR_EN, 0);
+  analogWrite(RL_EN, 0); analogWrite(RR_EN, 0);
+}
+
+// Flywheel control for the puck launcher
+void spinFlywheels() {
+  digitalWrite(FLY_L_EN, HIGH);
+  digitalWrite(FLY_R_EN, HIGH);
+  analogWrite(FLY_LPWM, FLY_TARGET_PWM);  // ~59% duty
+}
+
+void stopFlywheels() {
+  digitalWrite(FLY_L_EN, LOW);
+  digitalWrite(FLY_R_EN, LOW);
+  analogWrite(FLY_LPWM, 0);
+}
+
+// Edge-latched sensor reads (fires once per black→white transition)
+bool isLeftOnBlack = false;
+
+uint8_t testForLeftBlack() {
+  if (analogRead(LINE_L) > LINE_L_MIN &amp;&amp; !isLeftOnBlack) {
+    isLeftOnBlack = true;
+    return 1;
   }
+  return 0;
+}
+
+uint8_t testForLeftWhite() {
+  if (analogRead(LINE_L) &lt;= LINE_L_MIN &amp;&amp; isLeftOnBlack) {
+    isLeftOnBlack = false;
+    return 1;
+  }
+  return 0;
 }</code></pre>
             </div>
           </div>
