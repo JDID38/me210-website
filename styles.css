@@ -1,0 +1,72 @@
+/* ============================================================
+   ME210 Autonomous Curling Robot — Custom Styles
+   Supplements Tailwind CSS CDN for things Tailwind can't handle
+   inline (scroll behavior, pseudo-elements, code theme, etc.)
+   ============================================================ */
+
+/* Smooth scroll for anchor navigation */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem; /* offset for fixed navbar height */
+}
+
+/* ---- Placeholder Boxes ---- */
+/* Gray boxes that stand in for images/videos until replaced */
+.placeholder-box {
+  background-color: #e5e7eb;
+  border: 2px dashed #9ca3af;
+  position: relative;
+}
+
+.placeholder-label {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+  padding: 0 1rem;
+  user-select: none;
+}
+
+/* ---- Active Nav Link ---- */
+.nav-link.active {
+  color: #8C1515;
+  font-weight: 600;
+}
+
+/* ---- Code Blocks (dark theme) ---- */
+.code-block {
+  background-color: #111827;
+  color: #a7f3d0;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace;
+}
+
+.code-block-header {
+  background-color: #1f2937;
+  border-bottom: 1px solid #374151;
+}
+
+.code-block pre {
+  margin: 0;
+  white-space: pre;
+  tab-size: 4;
+}
+
+.code-block code {
+  line-height: 1.7;
+}
+
+/* ---- Model Viewer ---- */
+model-viewer {
+  --poster-color: transparent;
+}
+
+/* ---- Selection Color ---- */
+::selection {
+  background-color: #8C1515;
+  color: #ffffff;
+}
+
+/* ---- Subtle section divider ---- */
+section + section {
+  border-top: 1px solid #f3f4f6;
+}

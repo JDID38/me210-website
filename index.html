@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ME210 — Autonomous Curling Robot</title>
+
+  <!-- Tailwind CSS via CDN (no build step required) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['Fira Code', 'JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            cardinal: '#8C1515',
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Google Model Viewer (for 3D CAD visualization) -->
+  <script
+    type="module"
+    src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
+  ></script>
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="bg-white text-gray-800 font-sans leading-relaxed">
+
+  <!-- ========================================================== -->
+  <!--  NAVIGATION BAR — Fixed at top, links to all five sections  -->
+  <!-- ========================================================== -->
+  <nav id="navbar" class="fixed top-0 left-0 w-full bg-white/95 backdrop-blur shadow-sm z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo / site title -->
+        <a href="#home" class="text-lg font-bold text-cardinal tracking-tight">
+          ME210 Curling Robot
+        </a>
+
+        <!-- Desktop nav links -->
+        <div class="hidden md:flex space-x-8">
+          <a href="#home" class="nav-link text-sm font-medium text-gray-600 hover:text-cardinal transition-colors">Home</a>
+          <a href="#mechanical" class="nav-link text-sm font-medium text-gray-600 hover:text-cardinal transition-colors">Mechanical Design</a>
+          <a href="#electrical" class="nav-link text-sm font-medium text-gray-600 hover:text-cardinal transition-colors">Electrical Design</a>
+          <a href="#software" class="nav-link text-sm font-medium text-gray-600 hover:text-cardinal transition-colors">Software</a>
+          <a href="#team" class="nav-link text-sm font-medium text-gray-600 hover:text-cardinal transition-colors">The Team</a>
+        </div>
+
+        <!-- Mobile hamburger button -->
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-cardinal focus:outline-none"
+          aria-label="Toggle navigation menu"
+        >
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="hamburger-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <path id="close-icon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile dropdown menu (hidden by default) -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+      <div class="px-4 py-3 space-y-2">
+        <a href="#home" class="nav-link block text-sm font-medium text-gray-600 hover:text-cardinal py-1">Home</a>
+        <a href="#mechanical" class="nav-link block text-sm font-medium text-gray-600 hover:text-cardinal py-1">Mechanical Design</a>
+        <a href="#electrical" class="nav-link block text-sm font-medium text-gray-600 hover:text-cardinal py-1">Electrical Design</a>
+        <a href="#software" class="nav-link block text-sm font-medium text-gray-600 hover:text-cardinal py-1">Software</a>
+        <a href="#team" class="nav-link block text-sm font-medium text-gray-600 hover:text-cardinal py-1">The Team</a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ========================================================== -->
+  <!--  MAIN CONTENT                                               -->
+  <!-- ========================================================== -->
+  <main>
+
+    <!-- ====================================================== -->
+    <!--  SECTION 1 — HOME                                       -->
+    <!--  Contains: Hero banner + Project Overview               -->
+    <!-- ====================================================== -->
+    <section id="home" class="pt-16">
+
+      <!-- Hero -->
+      <div class="relative bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 text-center">
+          <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
+            Autonomous Curling Robot
+          </h1>
+          <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-12">
+            ME210: Introduction to Mechatronics — Stanford University
+          </p>
+
+          <!--
+            ============================================================
+            HERO IMAGE / VIDEO PLACEHOLDER
+            Replace the div below with an <img> or <video> tag pointing
+            to your media file in the assets/ folder. Example:
+
+              <img src="assets/hero-robot.jpg"
+                   alt="Our curling robot on the competition table"
+                   class="mx-auto rounded-lg shadow-2xl max-w-full" />
+            ============================================================
+          -->
+          <div class="placeholder-box mx-auto max-w-4xl aspect-video rounded-lg flex items-center justify-center">
+            <span class="placeholder-label">Hero Image / Video — Robot on Competition Table</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project Overview -->
+      <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Project Overview</h2>
+
+        <!--
+          Replace this placeholder text with your actual project description.
+        -->
+        <p class="text-gray-600 mb-4">
+          Our team designed and built an autonomous curling robot for the ME210 final competition.
+          The robot uses a mecanum-wheel drivetrain for omnidirectional movement, an angled puck
+          slide for consistent delivery, and a flywheel launcher to propel curling pucks down the
+          playing surface toward the target zone.
+        </p>
+        <p class="text-gray-600 mb-4">
+          The system is controlled by an Arduino Mega running a custom state-machine architecture
+          with non-blocking timers, enabling the robot to autonomously navigate the arena, collect
+          pucks, and execute precision shots within the two-minute match window.
+        </p>
+        <p class="text-gray-600">
+          This portfolio documents our mechanical design, electrical systems, software architecture,
+          and the team behind the project.
+        </p>
+      </article>
+    </section>
+
+
+    <!-- ====================================================== -->
+    <!--  SECTION 2 — MECHANICAL DESIGN                          -->
+    <!--  Contains: 3D Model Viewer + Component Image Grid       -->
+    <!-- ====================================================== -->
+    <section id="mechanical" class="bg-gray-50 py-16 md:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">Mechanical Design</h2>
+        <p class="text-gray-500 mb-12 max-w-2xl">
+          Explore our robot's CAD model in 3D and review the key mechanical subsystems.
+        </p>
+
+        <!-- ================================================== -->
+        <!--  3D MODEL VIEWER (Google Model Viewer)              -->
+        <!--                                                      -->
+        <!--  HOW TO USE YOUR OWN 3D MODEL:                       -->
+        <!--  1. Export your SolidWorks / Fusion 360 / OnShape    -->
+        <!--     assembly as a .GLB or .GLTF file.                -->
+        <!--  2. Place the file in the assets/ folder, e.g.       -->
+        <!--     assets/robot-assembly.glb                        -->
+        <!--  3. Change the "src" attribute below from the sample -->
+        <!--     URL to your local path:                          -->
+        <!--       src="assets/robot-assembly.glb"                -->
+        <!--  4. Adjust camera-orbit for a good default angle.    -->
+        <!--                                                      -->
+        <!--  The viewer supports:                                -->
+        <!--    - Mouse drag to rotate                            -->
+        <!--    - Scroll to zoom                                  -->
+        <!--    - Auto-rotation (remove auto-rotate to disable)   -->
+        <!-- ================================================== -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-16">
+          <model-viewer
+            id="robot-model"
+            src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+            alt="3D model of the ME210 autonomous curling robot"
+            camera-controls
+            auto-rotate
+            shadow-intensity="1"
+            camera-orbit="45deg 55deg 2.5m"
+            style="width: 100%; height: 500px;"
+            class="bg-gray-100"
+          >
+            <div class="absolute bottom-4 left-4 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full">
+              Drag to rotate · Scroll to zoom
+            </div>
+          </model-viewer>
+        </div>
+
+        <!-- Component Image Grid -->
+        <h3 class="text-xl font-semibold text-gray-900 mb-6">Key Components</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <!-- Component 1: Acrylic Chassis -->
+          <figure class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!--
+              Replace the placeholder div with:
+              <img src="assets/acrylic-chassis.jpg" alt="Laser-cut acrylic chassis" class="w-full h-72 object-cover" />
+            -->
+            <div class="placeholder-box w-full h-72 flex items-center justify-center">
+              <span class="placeholder-label">Acrylic Chassis Photo</span>
+            </div>
+            <figcaption class="p-4">
+              <h4 class="font-semibold text-gray-900 mb-1">Acrylic Chassis</h4>
+              <p class="text-sm text-gray-500">
+                Laser-cut acrylic base plate providing a rigid, lightweight frame for all subsystems.
+              </p>
+            </figcaption>
+          </figure>
+
+          <!-- Component 2: 3D Printed Motor Couplers -->
+          <figure class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!--
+              Replace the placeholder div with:
+              <img src="assets/motor-couplers.jpg" alt="3D printed motor couplers" class="w-full h-72 object-cover" />
+            -->
+            <div class="placeholder-box w-full h-72 flex items-center justify-center">
+              <span class="placeholder-label">3D Printed Motor Couplers Photo</span>
+            </div>
+            <figcaption class="p-4">
+              <h4 class="font-semibold text-gray-900 mb-1">3D Printed Motor Couplers</h4>
+              <p class="text-sm text-gray-500">
+                Custom PLA couplers connecting DC motor shafts to the mecanum wheel hubs with press-fit tolerances.
+              </p>
+            </figcaption>
+          </figure>
+
+          <!-- Component 3: Angled Puck Slide -->
+          <figure class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!--
+              Replace the placeholder div with:
+              <img src="assets/puck-slide.jpg" alt="Angled puck slide mechanism" class="w-full h-72 object-cover" />
+            -->
+            <div class="placeholder-box w-full h-72 flex items-center justify-center">
+              <span class="placeholder-label">Angled Puck Slide Photo</span>
+            </div>
+            <figcaption class="p-4">
+              <h4 class="font-semibold text-gray-900 mb-1">Angled Puck Slide</h4>
+              <p class="text-sm text-gray-500">
+                Gravity-fed slide delivering pucks to the flywheel launcher at a consistent angle for reliable shots.
+              </p>
+            </figcaption>
+          </figure>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ====================================================== -->
+    <!--  SECTION 3 — ELECTRICAL DESIGN                          -->
+    <!--  Contains: Schematic slots + explanatory text blocks    -->
+    <!-- ====================================================== -->
+    <section id="electrical" class="py-16 md:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">Electrical Design</h2>
+        <p class="text-gray-500 mb-12 max-w-2xl">
+          Schematics, wiring diagrams, and the stories behind our power system challenges.
+        </p>
+
+        <!-- Row 1: Main Power Distribution -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+          <figure class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!--
+              Replace the placeholder div with:
+              <img src="assets/power-distribution.png" alt="Main power distribution schematic" class="w-full h-full object-contain p-4" />
+            -->
+            <div class="placeholder-box w-full min-h-[400px] flex items-center justify-center">
+              <span class="placeholder-label">Main Power Distribution Schematic</span>
+            </div>
+          </figure>
+          <div class="flex flex-col justify-center">
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">Main Power Distribution</h3>
+            <!--
+              Replace this placeholder text with your actual explanation
+              of the power distribution system.
+            -->
+            <p class="text-gray-600 mb-3">
+              The robot runs on a 12 V LiPo battery pack with separate regulation paths for logic
+              (5 V via buck converter) and motor power (direct 12 V through high-current MOSFETs).
+              Schottky diodes prevent back-EMF from the flywheel motors from damaging the regulator.
+            </p>
+            <p class="text-gray-600">
+              During stall conditions, the flywheel motors draw upwards of 15 A per channel.
+              We added inline fuses and thermal monitoring after an early prototype burned through
+              a motor driver IC during a stall event in testing.
+            </p>
+          </div>
+        </div>
+
+        <!-- Row 2: Arduino Mega Wiring -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+          <div class="flex flex-col justify-center lg:order-1">
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">Arduino Mega Wiring</h3>
+            <!--
+              Replace this placeholder text with your actual explanation
+              of the Arduino Mega wiring layout.
+            -->
+            <p class="text-gray-600 mb-3">
+              The Arduino Mega serves as the central controller, interfacing with four mecanum
+              motor drivers via PWM, the flywheel ESC, limit switches for puck detection, and
+              IR sensors for line following and arena navigation.
+            </p>
+            <p class="text-gray-600">
+              All signal lines are routed through a custom perfboard shield that sits on top
+              of the Mega, keeping wiring organized and minimizing noise coupling between
+              high-current motor lines and sensitive analog inputs.
+            </p>
+          </div>
+          <figure class="bg-white rounded-xl shadow-md overflow-hidden lg:order-2">
+            <!--
+              Replace the placeholder div with:
+              <img src="assets/arduino-wiring.png" alt="Arduino Mega wiring diagram" class="w-full h-full object-contain p-4" />
+            -->
+            <div class="placeholder-box w-full min-h-[400px] flex items-center justify-center">
+              <span class="placeholder-label">Arduino Mega Wiring Diagram</span>
+            </div>
+          </figure>
+        </div>
+
+        <!-- Row 3: High-Current Motor Driver Circuits -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <figure class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!--
+              Replace the placeholder div with:
+              <img src="assets/motor-drivers.png" alt="High-current motor driver circuit schematic" class="w-full h-full object-contain p-4" />
+            -->
+            <div class="placeholder-box w-full min-h-[400px] flex items-center justify-center">
+              <span class="placeholder-label">High-Current Motor Driver Circuit Schematic</span>
+            </div>
+          </figure>
+          <div class="flex flex-col justify-center">
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">High-Current Motor Driver Circuits</h3>
+            <!--
+              Replace this placeholder text with your explanation of the
+              motor driver circuits and the burned driver incident.
+            -->
+            <p class="text-gray-600 mb-3">
+              Each flywheel motor is driven by a dedicated BTS7960 H-bridge module rated for 43 A
+              continuous current. We chose these after our initial L298N drivers failed catastrophically
+              during flywheel spin-up, where inrush currents exceeded 20 A per motor.
+            </p>
+            <p class="text-gray-600">
+              The BTS7960 modules include built-in thermal shutdown and current sensing. We added
+              external soft-start logic in firmware (ramping PWM over 500 ms) to limit inrush
+              and extend motor brush life.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ====================================================== -->
+    <!--  SECTION 4 — SOFTWARE                                   -->
+    <!--  Contains: State machine flowchart + Code blocks        -->
+    <!-- ====================================================== -->
+    <section id="software" class="bg-gray-50 py-16 md:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">Software</h2>
+        <p class="text-gray-500 mb-12 max-w-2xl">
+          State machine architecture, non-blocking timers, and mecanum drive logic.
+        </p>
+
+        <!-- State Machine Flowchart -->
+        <div class="mb-16">
+          <h3 class="text-xl font-semibold text-gray-900 mb-6">State Machine Architecture</h3>
+          <figure class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!--
+              Replace the placeholder div with:
+              <img src="assets/state-machine.png" alt="State machine flowchart" class="w-full h-auto object-contain p-6" />
+            -->
+            <div class="placeholder-box w-full min-h-[500px] flex items-center justify-center">
+              <span class="placeholder-label">State Machine Flowchart Image</span>
+            </div>
+          </figure>
+        </div>
+
+        <!-- Code Blocks -->
+        <div class="space-y-12">
+
+          <!-- Code Block 1: Non-Blocking Timer -->
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">Non-Blocking Timer Code</h3>
+            <p class="text-gray-500 mb-4 max-w-3xl">
+              We avoided <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">delay()</code>
+              entirely. Instead, all timed actions use a lightweight non-blocking timer pattern
+              so the main loop continues checking sensors and updating state.
+            </p>
+            <!--
+              Replace the code below with your actual non-blocking timer implementation.
+            -->
+            <div class="code-block rounded-xl overflow-hidden shadow-md">
+              <div class="code-block-header px-4 py-2 text-xs font-mono text-gray-400">
+                non_blocking_timer.ino
+              </div>
+              <pre class="p-4 overflow-x-auto"><code class="text-sm font-mono">// Non-blocking timer utility for ME210 state machine
+// Replace this example with your actual timer code
+
+static unsigned long timerStartTime = 0;
+static bool timerRunning = false;
+
+void startTimer(unsigned long duration) {
+  timerStartTime = millis();
+  timerRunning = true;
+}
+
+bool isTimerExpired(unsigned long duration) {
+  if (!timerRunning) return false;
+  if (millis() - timerStartTime >= duration) {
+    timerRunning = false;
+    return true;
+  }
+  return false;
+}
+
+// Usage in main loop:
+// if (isTimerExpired(2000)) { transitionToNextState(); }</code></pre>
+            </div>
+          </div>
+
+          <!-- Code Block 2: Mecanum Wheel Driving Logic -->
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">Mecanum Wheel Driving Logic</h3>
+            <p class="text-gray-500 mb-4 max-w-3xl">
+              Mecanum wheels enable omnidirectional movement by independently controlling
+              four motors. The mixing equations translate desired X, Y, and rotation velocities
+              into per-wheel speeds.
+            </p>
+            <!--
+              Replace the code below with your actual mecanum drive implementation.
+            -->
+            <div class="code-block rounded-xl overflow-hidden shadow-md">
+              <div class="code-block-header px-4 py-2 text-xs font-mono text-gray-400">
+                mecanum_drive.ino
+              </div>
+              <pre class="p-4 overflow-x-auto"><code class="text-sm font-mono">// Mecanum wheel velocity mixing for omnidirectional drive
+// Replace this example with your actual drive code
+
+void mecanumDrive(int vx, int vy, int omega) {
+  // vx    = strafe velocity  (-255 to 255)
+  // vy    = forward velocity (-255 to 255)
+  // omega = rotation speed   (-255 to 255)
+
+  int frontLeft  = vy + vx + omega;
+  int frontRight = vy - vx - omega;
+  int rearLeft   = vy - vx + omega;
+  int rearRight  = vy + vx - omega;
+
+  // Clamp values to valid PWM range
+  frontLeft  = constrain(frontLeft,  -255, 255);
+  frontRight = constrain(frontRight, -255, 255);
+  rearLeft   = constrain(rearLeft,   -255, 255);
+  rearRight  = constrain(rearRight,  -255, 255);
+
+  setMotor(FRONT_LEFT_PIN,  frontLeft);
+  setMotor(FRONT_RIGHT_PIN, frontRight);
+  setMotor(REAR_LEFT_PIN,   rearLeft);
+  setMotor(REAR_RIGHT_PIN,  rearRight);
+}
+
+void setMotor(int pin, int speed) {
+  // Set direction and PWM for a single motor
+  if (speed >= 0) {
+    digitalWrite(pin + 1, HIGH);
+    analogWrite(pin, speed);
+  } else {
+    digitalWrite(pin + 1, LOW);
+    analogWrite(pin, -speed);
+  }
+}</code></pre>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ====================================================== -->
+    <!--  SECTION 5 — THE TEAM                                   -->
+    <!--  Contains: Team member cards with avatar placeholders   -->
+    <!-- ====================================================== -->
+    <section id="team" class="py-16 md:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">The Team</h2>
+        <p class="text-gray-500 mb-12 max-w-2xl">
+          Meet the people behind the robot.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          <!--
+            TEAM MEMBER CARD TEMPLATE
+            Duplicate or edit these cards for each team member.
+            Replace:
+              - The placeholder avatar div with an <img> tag
+              - "Team Member Name" with the real name
+              - "Role / Specialization" with their contribution
+          -->
+
+          <!-- Member 1 -->
+          <div class="bg-white rounded-xl shadow-md p-6 text-center">
+            <div class="w-28 h-28 rounded-full bg-gray-200 mx-auto mb-4 flex items-center justify-center">
+              <span class="text-gray-400 text-xs">Photo</span>
+            </div>
+            <h4 class="font-semibold text-gray-900">Team Member 1</h4>
+            <p class="text-sm text-gray-500 mt-1">Role / Specialization</p>
+          </div>
+
+          <!-- Member 2 -->
+          <div class="bg-white rounded-xl shadow-md p-6 text-center">
+            <div class="w-28 h-28 rounded-full bg-gray-200 mx-auto mb-4 flex items-center justify-center">
+              <span class="text-gray-400 text-xs">Photo</span>
+            </div>
+            <h4 class="font-semibold text-gray-900">Team Member 2</h4>
+            <p class="text-sm text-gray-500 mt-1">Role / Specialization</p>
+          </div>
+
+          <!-- Member 3 -->
+          <div class="bg-white rounded-xl shadow-md p-6 text-center">
+            <div class="w-28 h-28 rounded-full bg-gray-200 mx-auto mb-4 flex items-center justify-center">
+              <span class="text-gray-400 text-xs">Photo</span>
+            </div>
+            <h4 class="font-semibold text-gray-900">Team Member 3</h4>
+            <p class="text-sm text-gray-500 mt-1">Role / Specialization</p>
+          </div>
+
+          <!-- Member 4 -->
+          <div class="bg-white rounded-xl shadow-md p-6 text-center">
+            <div class="w-28 h-28 rounded-full bg-gray-200 mx-auto mb-4 flex items-center justify-center">
+              <span class="text-gray-400 text-xs">Photo</span>
+            </div>
+            <h4 class="font-semibold text-gray-900">Team Member 4</h4>
+            <p class="text-sm text-gray-500 mt-1">Role / Specialization</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ========================================================== -->
+  <!--  FOOTER                                                     -->
+  <!-- ========================================================== -->
+  <footer class="bg-gray-900 text-gray-400 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+      <p>ME210 — Autonomous Curling Robot &copy; 2026. Stanford University.</p>
+      <p class="mt-1">Built for the ME210 Final Project Showcase.</p>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript -->
+  <script src="main.js"></script>
+</body>
+</html>
